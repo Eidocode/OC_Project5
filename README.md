@@ -1,4 +1,4 @@
-# OC_Project5 - Utilisez les données publiques de l'OpenFoodFacts -
+# Utilisez les données publiques de l'OpenFoodFacts
 
 La startup Pur Beurre travaille connait bien les habitudes alimentaires françaises. Leur restaurant, Ratatouille, remporte un succès croissant et attire toujours plus de visiteurs sur la butte de Montmartre.
 
