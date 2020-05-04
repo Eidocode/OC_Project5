@@ -10,6 +10,8 @@ Pour ce projet, le choix du **SGBDR** s'est porté sur **MySQL**. Dans le cas pr
 
 ### Structure :
 
+![MPD.PNG](https://github.com/Eidocode/OC_Project5/blob/bdd/Ressources/MPD.png)
+
 La base de données est composée de 3 tables : 
 
  - **Categories** : Contient les catégories récupérées depuis la base OpenFoodFacts et selon les critères définis dans le code
