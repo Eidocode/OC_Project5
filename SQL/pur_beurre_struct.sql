@@ -25,7 +25,7 @@ CREATE TABLE Categories (
   json_id VARCHAR(45) NULL,
   url VARCHAR(90) NULL,
   PRIMARY KEY (id)
-) ENGINE = InnoDB AUTO_INCREMENT = 6 DEFAULT CHARSET=utf8;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8;
 
 
 -- --------------------
@@ -42,7 +42,7 @@ CREATE TABLE Products (
   location VARCHAR(90) NULL,
   barcode VARCHAR(45) NOT NULL,
   PRIMARY KEY (id)
-) ENGINE = InnoDB AUTO_INCREMENT = 13 DEFAULT CHARSET=utf8;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8;
 
 
 -- -------------------
@@ -54,7 +54,7 @@ CREATE TABLE Favoris (
   added_date DATE NOT NULL,
   product_id INT UNSIGNED NOT NULL,
   PRIMARY KEY (id)
-) ENGINE = InnoDB AUTO_INCREMENT = 2 DEFAULT CHARSET=utf8;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8;
 
 
 -- ------------------

@@ -1,9 +1,8 @@
 import mysql.connector
 
-from class_cat import Category
+from category import Category
 
-tests = Category(10)
-   
+tests = Category(30)
 
 try:
     connx = mysql.connector.connect(
@@ -33,10 +32,3 @@ finally:
     if (connx.is_connected()):
         connx.close()
         print("Mysql connection closed...")
-
-
-
-# cursor.execute("""SELECT * FROM Categories""")
-# rows = cursor.fetchall()
-# for row in rows:
-#     print(row)

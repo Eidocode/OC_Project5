@@ -35,8 +35,3 @@ class Category:
             index = randrange(0, len(lst))
             self.list_categories.append(lst[index])
         return self.list_categories
-
-
-# test = Category(10)
-# for category in test.list_categories:
-#     print("Name : ", category["name"], " | Products : ", category["products"], " | ID : ", category["id"], " | URL : ", category["url"])
