@@ -11,7 +11,6 @@ class Category:
         self.nb_cat = nb_cat
         self.list_categories = self.get_random_categories
     
-
     @property
     def _get_categories(self):
         list_cat = []
@@ -22,7 +21,7 @@ class Category:
         list_cat = json_cat.get('tags')
 
         for category in list_cat:
-            if (category["products"] >= 50 and category["id"].startswith('fr')) :
+            if (category["products"] >= 100 and category["id"].startswith('fr')) :
                 list_cat_filtered.append(category)
         return list_cat_filtered
 
