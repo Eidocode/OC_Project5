@@ -3,7 +3,8 @@ import json
 
 from random import randrange
 
-URL = 'https://fr.openfoodfacts.org/'
+import constants as const
+
 
 class Category:
     
@@ -16,7 +17,7 @@ class Category:
         list_cat = []
         list_cat_filtered = []
 
-        url_cat = requests.get(URL + 'categories.json')
+        url_cat = requests.get(const.URL + 'categories.json')
         json_cat = url_cat.json()
         list_cat = json_cat.get('tags')
 

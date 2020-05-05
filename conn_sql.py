@@ -2,14 +2,16 @@ import mysql.connector
 
 from category import Category
 
+import constants as const
+
 tests = Category(30)
 
 try:
     connx = mysql.connector.connect(
-        host = "192.168.1.77",
-        user = "student",
-        password = "student",
-        database = "pur_beurre"
+        host = const.SRV_IP,
+        user = const.USER_ID,
+        password = const.USER_PWD,
+        database = const.DB_NAME
     )
 
     insert_query_categories = """INSERT INTO Categories (name, json_id, url)

@@ -6,8 +6,8 @@ from math import ceil
 
 from category import Category
 
-URL = 'https://fr.openfoodfacts.org/' # /categorie/[name_cat].json
-PRODUCTS_PER_PAGE = 20
+import constants as const
+
 
 class Product:
 
@@ -20,7 +20,7 @@ class Product:
         json_products = url_products.json()
             
         nb_catg_products = json_products.get('count')
-        nb_catg_pages = ceil(nb_catg_products / PRODUCTS_PER_PAGE)
+        nb_catg_pages = ceil(nb_catg_products / const.PRODUCTS_PER_PAGE)
 
         nb_prod = self.nb_products
         if self.nb_products > nb_catg_products:
