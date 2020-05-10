@@ -22,10 +22,14 @@ class Category:
         list_cat = json_cat.get('tags')
 
         for category in list_cat:
-            url_category = requests.get(const.URL + ".json")
-            if (category["products"] >= 50 and category["id"].startswith('fr')) :
-                list_cat_filtered.append(category)
-        print("Nb. categories > 500 products : " + str(len(list_cat_filtered)))
+            if (category['products'] >= 100 and category["id"].startswith('fr')) :
+                url_category = requests.get(category['url'] + '.json')
+                json_category = url_category.json()
+                nb_products = int(json_category.get('count'))
+                if nb_products >= 100:
+                    list_cat_filtered.append(category)
+
+        print("Nb. categories >= 100 products : " + str(len(list_cat_filtered)))
         return list_cat_filtered
 
     @property
