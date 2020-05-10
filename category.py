@@ -10,7 +10,7 @@ class Category:
     
     def __init__(self, nb_cat):
         self.nb_cat = nb_cat
-        self.list_categories = self.get_random_categories
+        self.categories = self.get_random_categories
     
     @property
     def _get_categories(self):
@@ -34,10 +34,13 @@ class Category:
 
     @property
     def get_random_categories(self):
-        self.list_categories = []
+        self.categories = []
         lst = self._get_categories
 
         for i in range(self.nb_cat):
             index = randrange(0, len(lst))
-            self.list_categories.append(lst[index])
-        return self.list_categories
+            while 'lst[index]' in self.categories:
+                index = randrange(0, len(lst))
+            self.categories.append(lst[index])
+
+        return self.categories
