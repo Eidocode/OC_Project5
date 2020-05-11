@@ -4,7 +4,7 @@ from category import Category
 
 import constants as const
 
-tests = Category(30)
+tests = Category(20)
 
 try:
     connx = mysql.connector.connect(
@@ -33,4 +33,5 @@ except mysql.connector.Error as error:
 finally:
     if (connx.is_connected()):
         connx.close()
+        print("Categories injection successful !!!")
         print("Mysql connection closed...")
