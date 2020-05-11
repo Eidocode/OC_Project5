@@ -43,16 +43,16 @@ class Product:
         
         return self.products
 
-list_catgs = Category(10)
-list_prods = []
+# list_catgs = Category(10)
+# list_prods = []
 
-for cat in list_catgs.categories :
-    print("Catégorie : " + cat["name"] + " | " + str(cat["products"]) + " products" + " | "+ cat["url"])
-    test_prod = Product(cat["url"], 10)
-    for product in test_prod.products:
-        list_prods.append(product)
-        print('<--| Add ' + product["product_name"] + ' to list...')
-    print ("LISTE : {} products".format(len(list_prods)))
+# for cat in list_catgs.categories :
+#     print("Catégorie : " + cat["name"] + " | " + str(cat["products"]) + " products" + " | "+ cat["url"])
+#     test_prod = Product(cat["url"], 10)
+#     for product in test_prod.products:
+#         list_prods.append(product)
+#         print('<--| Add ' + product["product_name"] + ' to list...')
+#     print ("LISTE : {} products".format(len(list_prods)))
 
 
 

@@ -20,7 +20,7 @@ try:
 
     cursor = connx.cursor()
     print("Connection Established...")
-    for test in tests.list_categories:
+    for test in tests.categories:
         insert_data = (test['name'], test['id'], test['url'])
         cursor.execute(insert_query_categories, insert_data)
     connx.commit()
