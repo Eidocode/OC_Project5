@@ -19,7 +19,7 @@ La base de données est composée de 3 tables :
 |Field           |Type                   |NULL  | KEY    |DEFAULT |EXTRA          |
 |----------------|-----------------------|------|--------|--------|---------------|
 |id              |INT(10), Unsigned      |NO    |PRI     |NULL    |Auto_increment |
-|name            |VARCHAR(45)            |NO    |        |NULL    |               |
+|name            |TINYTEXT               |NO    |        |NULL    |               |
 |json_id         |VARCHAR(45)            |YES   |        |NULL    |               |
 |url             |VARCHAR(90)            |YES   |        |NULL    |               |
 
@@ -28,8 +28,8 @@ La base de données est composée de 3 tables :
 |Field           |Type                   |NULL  | KEY    |DEFAULT |EXTRA          |
 |----------------|-----------------------|------|--------|--------|---------------|
 |id              |INT(10), Unsigned      |NO    |PRI     |NULL    |Auto_increment |
-|name            |VARCHAR(45)            |NO    |        |NULL    |               |
-|brand           |VARCHAR(45)            |YES   |        |NULL    |               |
+|name            |TINYTEXT               |NO    |        |NULL    |               |
+|brand           |VARCHAR(90)            |YES   |        |NULL    |               |
 |description     |TEXT                   |YES   |        |NULL    |               |
 |nutriscore      |CHAR(1)                |YES   |        |NULL    |               |
 |category_id     |INT(10), Unsigned      |NO    |MUL     |NULL    |               |
@@ -58,8 +58,29 @@ Attribuer les droits sur la base pur_beurre depuis la console **MySQL** :
     GRANT ALL PRIVILEGES ON pur_beurre.* TO '[login]'@'localhost' IDENTIFIED BY '[password]' WITH GRANT OPTION;
 Si la base est hébergée sur une machine différente, il faudra remplacer '**localhost**' par '**%**'.
 
-Execution du script **SQL** depuis la console **MySQL** :
+Exécution du script **SQL** depuis la console **MySQL** :
 
     SOURCE pur_beurre_struct.sql
 
 Cela implique que la console **MySQL** soit lancée depuis le même chemin que le script **SQL**. Sinon, il faudra spécifier le chemin lors de l'exécution.
+
+### Ajout des catégories dans la base :
+
+L'ajout des catégories dans la base se fait par l'intermédiaire de deux fichiers python "**./category.py**" et "**./inject_categories.py**".
+
+ - **./category.py** : 
+ Contient la classe **Category**, utilisée pour sélectionner les catégories qui seront injectées dans la Table **Categories** de la base. La méthode **_get_categories** se charge de récupérer la liste des différentes catégories depuis l'URL https://fr.openfoodfacts.org/categories.json. Les catégories sont ici filtrées, notamment pour ne garder que celles dont la clé ['id'] commence par '**fr**' et également celles qui ont un total de produits minimum (il est de 100 par défaut, à voir si nous le rendrons plus dynamique par la suite dans l'application). Une fois filtrées, la méthode **get_random_categories** sélectionne (aléatoirement) un nombre de catégorie défini en paramètre lors de l'instanciation de la classe.  
+ 
+ - **./inject_categories.py** :
+ C'est dans ce fichier que se fait l'instanciation de la classe **Category**, c'est également par l'intermédiaire de celui-ci que nous pouvons nous connecter à la base et y injecter les catégories par l'intermédiaire de requêtes SQL. 
+
+### Ajout des produits dans la base :
+
+A l'instar des catégories, l'ajout des produits se fait par l'intermédiaire de deux fichiers python "**./products.py**" et "**./inject_products.py**".
+
+ - **./products.py** : 
+Contient la classe **Product**, utilisée pour sélectionner les différents produits qui seront injectés dans la Table **Products** de la base. La méthode **_get_products** se charge de récupérer les produits contenus visibles depuis l'URL (**exemple** :  https://fr.openfoodfacts.org/categorie/sauces-tomates-au-basilic.json) renseignée en paramètre lors de l'instanciation de la classe. Le nombre de produits à récupérer est également précisé lors de l'instanciation.
+Les produits sont affichés par 20, pour accéder aux suivants, il est nécessaire de changer de page (l'exemple ci-dessus permet d'accéder à la première page). Pour cela, il est nécessaire de modifier l'URL pour indiquer une page différente, si nous reprenons l'exemple précédent, il faudra ajouter "**/2**" avant "**.json**". L'algorithme se charge donc de récupérer le nombre de produits total contenus dans la catégorie que l'on divise par 20. L'arrondi supérieur du résultat obtenu permet alors d'obtenir le nombre de page que la catégorie contient. Un numéro de page est alors défini aléatoirement afin de récupérer la liste des produits qu'elle contient. Un produit est alors sélectionné (également aléatoirement) dans cette liste.
+
+ - **./inject_products.py** : 
+L'instanciation de la classe **Product** se fait dans ce fichier. Ce fichier se connecte à la base pour notamment récupérer la liste des catégories préalablement injectées. Le champ **url** des catégories est utilisé lors de l'instanciation de la classe, les produits récupérés sont alors injectés dans la base.
