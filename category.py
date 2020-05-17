@@ -22,11 +22,11 @@ class Category:
         list_cat = json_cat.get('tags')
 
         for category in list_cat:
-            if (category['products'] >= 100 and category["id"].startswith('fr')) :
+            if (category['products'] >= const.MIN_PRODUCTS_TO_FILTER and category["id"].startswith('fr')) :
                 url_category = requests.get(category['url'] + '.json')
                 json_category = url_category.json()
                 nb_products = int(json_category.get('count'))
-                if nb_products >= 100:
+                if nb_products >= const.MIN_PRODUCTS_TO_FILTER:
                     list_cat_filtered.append(category)
 
         print("Nb. categories >= 100 products : " + str(len(list_cat_filtered)))

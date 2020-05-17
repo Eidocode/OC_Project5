@@ -1,10 +1,13 @@
 import mysql.connector
 
+from colorama import init, deinit, Fore, Back, Style
+
 from category import Category
 
 import constants as const
 
-tests = Category(20)
+
+categories = Category(const.NB_CATEGORIES_TO_GET)
 
 try:
     connx = mysql.connector.connect(
@@ -19,19 +22,25 @@ try:
                             (%s, %s, %s)"""
 
     cursor = connx.cursor()
-    print("Connection Established...")
-    for test in tests.categories:
-        insert_data = (test['name'], test['id'], test['url'])
-        cursor.execute(insert_query_categories, insert_data)
+    print(Fore.GREEN + "Connection Established...")
+
+    insert_data = []
+    for category in categories.categories:
+        data = (category['name'], category['id'], category['url'])
+        insert_data.append(data)
+
+    cursor.executemany(insert_query_categories, insert_data)
+    print(Fore.GREEN + str(cursor.rowcount) + " QUERY SUCCESSFULL...")
     connx.commit()
-    print(cursor.rowcount, "QUERY SUCCESSFULL...")
+    print(Fore.GREEN + "Categories injection successful !!!")
     cursor.close()
 
 except mysql.connector.Error as error:
-    print("Failed to insert record into table {}".format(error))
+    print(Fore.RED + "Failed to insert record into table {}".format(error))
 
 finally:
     if (connx.is_connected()):
         connx.close()
-        print("Categories injection successful !!!")
         print("Mysql connection closed...")
+
+deinit()
