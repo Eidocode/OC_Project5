@@ -89,10 +89,10 @@ try:
                                 get_prod.products['product_name'] + " already in database...",
                                 const.NB_TRY, product_viable)
 
-            test3_pname =test_product(get_prod.products['product_name'] == "", "Product doesn't have a name...",
+            test_pname =test_product(get_prod.products['product_name'] == "", "Product doesn't have a name...",
                                 const.NB_TRY, product_viable)
 
-            product_viable = (test_pkey == test_pcode == test3_pname)
+            product_viable = (test_pkey == test_pcode == test_pname)
             
             if not product_viable:
                 print(Fore.RED + "Unable to find another product... " + get_prod.products['code'])
