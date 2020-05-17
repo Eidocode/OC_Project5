@@ -29,11 +29,12 @@ La base de données est composée de 3 tables :
 |----------------|-----------------------|------|--------|--------|---------------|
 |id              |INT(10), Unsigned      |NO    |PRI     |NULL    |Auto_increment |
 |name            |TINYTEXT               |NO    |        |NULL    |               |
-|brand           |VARCHAR(90)            |YES   |        |NULL    |               |
+|brand           |TINYTEXT               |YES   |        |NULL    |               |
 |description     |TEXT                   |YES   |        |NULL    |               |
 |nutriscore      |CHAR(1)                |YES   |        |NULL    |               |
 |category_id     |INT(10), Unsigned      |NO    |MUL     |NULL    |               |
-|location        |VARCHAR(90)            |YES   |        |NULL    |               |
+|places          |VARCHAR(90)            |YES   |        |NULL    |               |
+|stores          |VARCHAR(90)            |YES   |        |NULL    |               |
 |barcode         |VARCHAR(45)            |NO    |        |NULL    |               |
 
  - **Favoris** : Cette base contiendra principalement l'ID des produits ajoutés en tant que Favoris par l'utilisateur final. 
@@ -79,8 +80,11 @@ L'ajout des catégories dans la base se fait par l'intermédiaire de deux fichie
 A l'instar des catégories, l'ajout des produits se fait par l'intermédiaire de deux fichiers python "**./products.py**" et "**./inject_products.py**".
 
  - **./products.py** : 
-Contient la classe **Product**, utilisée pour sélectionner les différents produits qui seront injectés dans la Table **Products** de la base. La méthode **_get_products** se charge de récupérer les produits contenus visibles depuis l'URL (**exemple** :  https://fr.openfoodfacts.org/categorie/sauces-tomates-au-basilic.json) renseignée en paramètre lors de l'instanciation de la classe. Le nombre de produits à récupérer est également précisé lors de l'instanciation.
+Contient la classe **Product**, utilisée pour retourner un produit lors de l'instanciation qui pourra par la suite être injecté dans la Table **Products** de la base. La méthode **_get_products** se charge de récupérer les produits contenus visibles depuis l'URL (**exemple** :  https://fr.openfoodfacts.org/categorie/sauces-tomates-au-basilic.json) renseignée en paramètre lors de l'instanciation de la classe. 
 Les produits sont affichés par 20, pour accéder aux suivants, il est nécessaire de changer de page (l'exemple ci-dessus permet d'accéder à la première page). Pour cela, il est nécessaire de modifier l'URL pour indiquer une page différente, si nous reprenons l'exemple précédent, il faudra ajouter "**/2**" avant "**.json**". L'algorithme se charge donc de récupérer le nombre de produits total contenus dans la catégorie que l'on divise par 20. L'arrondi supérieur du résultat obtenu permet alors d'obtenir le nombre de page que la catégorie contient. Un numéro de page est alors défini aléatoirement afin de récupérer la liste des produits qu'elle contient. Un produit est alors sélectionné (également aléatoirement) dans cette liste.
 
  - **./inject_products.py** : 
 L'instanciation de la classe **Product** se fait dans ce fichier. Ce fichier se connecte à la base pour notamment récupérer la liste des catégories préalablement injectées. Le champ **url** des catégories est utilisé lors de l'instanciation de la classe, les produits récupérés sont alors injectés dans la base.
+Plusieurs tests sont effectués dans ce fichier, notamment pour vérifier que le produit n'est pas déjà présent dans la base pour éviter les doublons. Certains produits (très peu) sont apparus sans nom dans le **JSON**, ce qui peut poser problème pour l'application... Ces produits sont donc filtrés pour éviter un problème éventuel. 
+Le nombre de produits à injecter dans la base est maintenant défini dans ce fichier (dans la version précédente, c'était géré par la classe **Products**). 
+Lorsque le script rencontre une erreur dans les tests, il essaye de trouver un autre produit "éventuellement" conforme. Au bout de 3 essais, l'itération est passée. Si le script devait récupérer 10 produits, il y en aura donc un de moins etc...

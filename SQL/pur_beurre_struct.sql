@@ -21,7 +21,7 @@ DROP TABLE IF EXISTS Favoris;
 
 CREATE TABLE Categories (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  name VARCHAR(45) NOT NULL,
+  name TINYTEXT NOT NULL,
   json_id VARCHAR(45) NULL,
   url VARCHAR(90) NULL,
   PRIMARY KEY (id)
@@ -34,12 +34,13 @@ CREATE TABLE Categories (
 
 CREATE TABLE Products (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  name VARCHAR(45) NOT NULL,
-  brand VARCHAR(45) NULL,
+  name TINYTEXT NOT NULL,
+  brand TINYTEXT NULL,
   description TEXT NULL,
   nutriscore CHAR(1) NULL,
   category_id INT UNSIGNED NOT NULL,
-  location VARCHAR(90) NULL,
+  places VARCHAR(90) NULL,
+  stores VARCHAR(90) NULL,
   barcode VARCHAR(45) NOT NULL,
   PRIMARY KEY (id)
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8;
@@ -62,15 +63,15 @@ CREATE TABLE Favoris (
 -- ------------------
 
 ALTER TABLE Products
-	ADD CONSTRAINT fk_categories_id
-	FOREIGN KEY (category_id)
-	REFERENCES Categories (id)
-	ON DELETE NO ACTION
-	ON UPDATE NO ACTION;
+        ADD CONSTRAINT fk_categories_id
+        FOREIGN KEY (category_id)
+        REFERENCES Categories (id)
+        ON DELETE NO ACTION
+        ON UPDATE NO ACTION;
 
 ALTER TABLE Favoris
-	ADD CONSTRAINT fk_products_id
-	FOREIGN KEY (product_id)
-	REFERENCES Products (id)
-	ON DELETE NO ACTION
-	ON UPDATE NO ACTION;
+        ADD CONSTRAINT fk_products_id
+        FOREIGN KEY (product_id)
+        REFERENCES Products (id)
+        ON DELETE NO ACTION
+        ON UPDATE NO ACTION;
