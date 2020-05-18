@@ -1,5 +1,6 @@
 URL = 'https://fr.openfoodfacts.org/'  # /categorie/[name_cat].json
 
+QUERY_GET_CATEGORIES = """SELECT * FROM Categories"""
 
 NB_CATEGORIES_TO_GET = 10
 MIN_PRODUCTS_TO_FILTER = 100 
