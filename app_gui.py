@@ -14,17 +14,22 @@ window.resizable(width=0, height=0)
 label = tk.Label(window, text="Application Pur Beurre", font="Arial 22 bold")
 label.pack()
 
-# frame = tk.LabelFrame(window, text="Titre de la frame", padx=1000, pady=1000)
-# frame.pack(fill="both", expand="yes")
- 
-# tk.Label(frame, text="A l'intérieure de la frame").pack()
+class Application(tk.Frame):
+    def __init__(self, master=None):
+        super().__init__(master)
+        self.master = master
+        self.pack()
+        self.create_widgets()
+    
+    def create_widgets(self):
+        
 
-# Frame1 = tk.Frame(window, borderwidth=5, relief=tk.GROOVE)
-# Frame1.pack(side=tk.LEFT, padx=10, pady=30)
-# tk.Label(Frame1, text="Frame 1").pack()
 
-def get_categories():
 
+
+
+
+def get_categories(self):
     try:
         connx = mysql.connector.connect(
             host = const.SRV_IP,
@@ -51,20 +56,13 @@ def get_categories():
     return result
 
 
+
 list_categories = get_categories()
 
 list_cat_name = []
 for cat in list_categories:
     list_cat_name.append(cat[1])
 
-
-# liste = tk.Listbox(window)
-
-# i=1
-# for category in list_categories:
-#     liste.insert(i, category[1])
-#     i+=1
-# liste.pack()
 
 labelChoix = tk.Label(window, text = "Veuillez choisir une catégorie !", font="Arial 14")
 labelChoix.pack()
