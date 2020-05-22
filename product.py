@@ -25,19 +25,34 @@ class Product:
         self.nb_products = int(json_products.get('count'))  # Get Category number of products
         self.nb_pages = ceil(self.nb_products / const.PRODUCTS_PER_PAGE)  # Get Category number of pages
 
-        # nb_prod = self.nb_products
-        # if self.nb_products > nb_catg_products: # Check if nb_products is greater than Category number of products 
-        #                                         # to avoid a bug in range(nb_product) below...
-        #     nb_prod = nb_catg_products
-        
-        rand_num_page = randrange(1, self.nb_pages)
-        rand_url = self.category_url + "/" + str(rand_num_page) + ".json"  
-        rand_url_products = requests.get(rand_url)  # Get content of a random page number
-        json_rand_url_products = rand_url_products.json()
-        list_rand_url_products = json_rand_url_products.get('products')  # Get products in random URL
+        list_all_prod = []
+        self.products = []
 
-        index = randrange(0, len(list_rand_url_products))
-        self.products = list_rand_url_products[index]
-        #print("|--> Get 1 product from page " + str(rand_num_page) + " : " + self.products[-1]["product_name"])
-        
+        i = 1
+        for i in range(self.nb_pages):
+            this_url = self.category_url + "/" + str(i) + ".json"
+            this_url_products = requests.get(this_url)
+            json_this_url_products = this_url_products.json()
+            list_this_url_products = json_this_url_products.get('products')
+            
+            for product in list_this_url_products:
+                list_all_prod.append(product)
+
+
+        # rand_num_page = randrange(1, self.nb_pages)
+        # rand_url = self.category_url + "/" + str(rand_num_page) + ".json"
+        # rand_url_products = requests.get(rand_url)  # Get content of a random page number
+        # json_rand_url_products = rand_url_products.json()
+        # list_rand_url_products = json_rand_url_products.get('products')  # Get products in random URL
+
+        # index = randrange(0, len(list_rand_url_products))
+        # self.products = list_rand_url_products[index]
+        self.products = list_all_prod
         return self.products
+
+prod = Product('https://fr.openfoodfacts.org/categorie/wraps')
+print(len(prod.products))
+
+for i in range(10):
+    rand_index = randrange(1, len(prod.products))
+    print(prod.products[rand_index]['product_name'])
