@@ -64,6 +64,6 @@ class ApiHandlerProducts:
 
 
 
-cat_prod = ApiHandlerProducts('https://fr.openfoodfacts.org/categorie/wraps', 130)
+#cat_prod = ApiHandlerProducts('https://fr.openfoodfacts.org/categorie/wraps', 130)
 
 deinit()
