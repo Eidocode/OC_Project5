@@ -5,24 +5,57 @@ from random import randrange
 from math import ceil
 from colorama import init, deinit, Fore, Back, Style
 
-from api_handler_categories import ApiHandlerCategories
-
 import constants as const
 
 
 init(autoreset=True)
 
 class ApiHandlerProducts:
+    """
+    Class used to handle Products in API
+
+    ...
+
+    Attributes
+    ----------
+    category_url : string
+        Category URL to browse
+    
+    nb_products : int
+        Number of products in Category
+    
+    nb_pages : int
+        Number of pages in category. By default, a category contains
+        20 products
+    
+    nb_prod_to_get : int
+        Number of products to get randomly in category. Define during 
+        instantiation
+    
+    products : list
+        List of products retrieved randomly
+    
+    Methods
+    -------
+    _get_all_products
+        Returns a list of all products in the category
+    
+    get_random_products
+        Returns a list of "nb_prod" products retrieved randomly
+        
+    """
 
     def __init__(self, category_url, nb_prod):
         self.category_url = category_url
         self.nb_products = 0
         self.nb_pages = 0
-        self.nb_prod = nb_prod
+        self.nb_prod_to_get = nb_prod
         self.products = self.get_random_products
         
     @property
     def _get_all_products(self):
+        """Returns a list of all products in the category"""
+
         url_products = requests.get(self.category_url + ".json")  # Request Category URL
         json_products = url_products.json()
             
@@ -45,24 +78,23 @@ class ApiHandlerProducts:
     
     @property
     def get_random_products(self):
+        """Returns a list of "nb_prod" products retrieved randomly"""
+
         list_category_prods = self._get_all_products
         list_rand_prods = []
 
-        nb_prod = self.nb_prod
-        if self.nb_prod > len(list_category_prods):
-            nb_prod = len(list_category_prods)
-            print(Fore.YELLOW + "There are only " + str(nb_prod) +" products available in this category.")
+        nb_prod_to_get = self.nb_prod_to_get
+        if self.nb_prod_to_get > len(list_category_prods):
+            nb_prod_to_get = len(list_category_prods)
+            print(Fore.YELLOW + "There are only " + str(nb_prod_to_get) +" products available in this category.")
         
-        for i in range(nb_prod):
+        for i in range(nb_prod_to_get):
             index = randrange(0, len(list_category_prods))
             prod = list_category_prods.pop(index)
-            print(str(i+1) + " : " + prod['product_name'])
             list_rand_prods.append(prod)
             i += 1
         
         return list_rand_prods
-
-
 
 #cat_prod = ApiHandlerProducts('https://fr.openfoodfacts.org/categorie/wraps', 130)
 

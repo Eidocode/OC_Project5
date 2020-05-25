@@ -7,6 +7,28 @@ import constants as const
 
 
 class ApiHandlerCategories:
+    """
+    Class used to handle Categories in API
+
+    ...
+
+    Attributes
+    ----------
+    nb_cat : int
+        Number of categories to handle
+    
+    categories : list
+        list of categories retrieved randomly
+    
+    Methods
+    -------
+    _get_categories
+        Returns all categories retrieved according to the filters 
+        defined in the method
+    
+    get_random_categories
+        Returns "nb_cat" random categories 
+    """
     
     def __init__(self, nb_cat):
         self.nb_cat = nb_cat
@@ -14,6 +36,9 @@ class ApiHandlerCategories:
     
     @property
     def _get_categories(self):
+        """Returns all categories retrieved according to the filters 
+        defined in the method 
+        """
         list_cat = []
         list_cat_filtered = []
 
@@ -26,14 +51,16 @@ class ApiHandlerCategories:
                 url_category = requests.get(category['url'] + '.json')
                 json_category = url_category.json()
                 nb_products = int(json_category.get('count'))
-                if nb_products >= const.MIN_PRODUCTS_TO_FILTER:
-                    list_cat_filtered.append(category)
+                if nb_products != None:
+                    if nb_products >= const.MIN_PRODUCTS_TO_FILTER:
+                        list_cat_filtered.append(category)
 
         print("Nb. categories >= 100 products : " + str(len(list_cat_filtered)))
         return list_cat_filtered
 
     @property
     def get_random_categories(self):
+        """Returns "nb_cat" random categories"""
         self.categories = []
         lst = self._get_categories
 

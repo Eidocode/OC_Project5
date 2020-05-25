@@ -76,12 +76,6 @@ try:
             get_prod = Product(catg[3])
             product_viable = True
             
-            # if not is_ascii(get_prod.products['product_name']):
-            #     print(Fore.MAGENTA + "product_name contains 4 bytes character... passing iteration...")
-            #     product_viable = False
-            # else:
-            #     product_viable = True
-
             test_pkey = test_product(not('product_name' in get_prod.products.keys()),
                                 "Unable to find key product_name...", const.NB_TRY, product_viable)
             
@@ -89,7 +83,7 @@ try:
                                 get_prod.products['product_name'] + " already in database...",
                                 const.NB_TRY, product_viable)
 
-            test_pname =test_product(get_prod.products['product_name'] == "", "Product doesn't have a name...",
+            test_pname = test_product(get_prod.products['product_name'] == "", "Product doesn't have a name...",
                                 const.NB_TRY, product_viable)
 
             product_viable = (test_pkey == test_pcode == test_pname)
