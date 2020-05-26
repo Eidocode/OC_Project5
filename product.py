@@ -10,11 +10,45 @@ from category import Category
 init(autoreset=True)
 
 class Product:
+    """
+    Class used to manipulate products
+
+    ...
+
+    Attributes
+    ----------
+
+
+    Methods
+    -------
+    get_barcodes_from_db
+        Returns a list with barcodes values from database
+    
+    test_condition(condition, message)
+        Returns True or False if 'condition'
+    
+    test_product(product, list_barcodes)
+        Test some keys and values from dict product
+    
+    _set_key_value(product, value)
+        Returns a value if value exist in product.keys
+    
+    _get_value_for_db(categorie, product)
+        Returns a tuple with define values based on categorie and product
+    
+    _get_from_api(nb_prod)
+        Returns a list of products recovered from API
+    
+    set_to_db(datas_to_inject)
+        Set a tuple of products to set in database
+    """
     
     def __init__(self):
         pass
 
     def get_barcodes_from_db(self):
+        """Returns a list with barcodes values from database
+        """
         db_manager = DatabaseManager()
         barcodes = []
         barcodes_from_db = []
@@ -29,6 +63,17 @@ class Product:
         return barcodes
 
     def test_condition(self, condition, message):
+        """Returns True or False if 'condition'
+
+        Parameters
+        ----------
+        condition
+            The condition to verify
+        
+        message : string
+            The message to print
+        """
+
         pass_test = True
 
         if condition:
@@ -38,6 +83,17 @@ class Product:
         return pass_test
     
     def test_product(self, product, list_barcodes):
+        """Test some keys and values from dict product
+
+        Parameters
+        ----------
+        product : dict
+            Contains product values to test
+        
+        list_barcode: list
+            List of products barcodes in database
+        """
+
         test_pkey = self.test_condition(not('product_name' in product.keys()),
                             "Unable to find key product_name...")
         
@@ -53,11 +109,33 @@ class Product:
         return test_pkey == test_pcode == test_pname
     
     def _set_key_value(self, product, value):
+        """Returns a value if value exist in product.keys,
+        else, returns NONE value
+
+        Parameters
+        ----------
+        product : dict
+            Contains product keys and values
+        
+        value
+            The value to check in keys
+        """
+
         if value in product.keys():
             return product[value]
         return None
 
-    def _get_value_for_db(self, categorie, product):
+    def _get_value_for_db(self, category, product):
+        """Returns a tuple with define values based on categorie and product
+
+        Parameters
+        ----------
+        category
+            Current category
+        
+        product
+            Current product
+        """
         product_name = product['product_name']
         product_brand = self._set_key_value(product, 'brands')
         product_description = self._set_key_value(product, 'ingredients_text')
@@ -67,12 +145,20 @@ class Product:
         product_barcode = product['code']
 
         product_values =  (product_name, product_brand, product_description, product_nutriscore,
-                            categorie[0], product_places, product_stores, product_barcode)
+                            category[0], product_places, product_stores, product_barcode)
         
         return product_values
 
 
     def _get_from_api(self, nb_prod):
+        """Returns a list of products recovered from API
+
+        Parameters
+        ----------
+        nb_prod : int
+            Number of products to recover
+        """
+
         list_products = []
         barcodes = []
         category = Category()
@@ -101,6 +187,14 @@ class Product:
         return list_products
     
     def set_to_db(self, datas_to_inject):
+        """Set a tuple of products to set in database
+
+        Parameters
+        ----------
+        datas_to_inject : tuple
+            Contains values to be injected in database
+        """
+        
         db_manager = DatabaseManager()
 
         insert_query = """INSERT INTO Products
