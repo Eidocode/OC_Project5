@@ -44,7 +44,16 @@ class Product:
     """
     
     def __init__(self):
-        pass
+        self.products_in_db = self.get_all_from_db()
+
+    def get_all_from_db(self):
+        db_manager = DatabaseManager()
+        list_products = []
+
+        query_get_products = """SELECT * FROM Products"""
+        
+        list_products = db_manager.get_query(query_get_products)
+        return list_products
 
     def get_barcodes_from_db(self):
         """Returns a list with barcodes values from database
@@ -194,7 +203,7 @@ class Product:
         datas_to_inject : tuple
             Contains values to be injected in database
         """
-        
+
         db_manager = DatabaseManager()
 
         insert_query = """INSERT INTO Products
