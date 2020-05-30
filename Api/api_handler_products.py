@@ -5,8 +5,6 @@ from random import randrange
 from math import ceil
 from colorama import init, deinit, Fore, Back, Style
 
-import constants as const
-
 
 init(autoreset=True)
 
@@ -95,7 +93,5 @@ class ApiHandlerProducts:
             i += 1
         
         return list_rand_prods
-
-#cat_prod = ApiHandlerProducts('https://fr.openfoodfacts.org/categorie/wraps', 130)
 
 deinit()

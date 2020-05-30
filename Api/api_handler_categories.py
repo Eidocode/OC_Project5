@@ -3,8 +3,6 @@ import json
 
 from random import randrange
 
-import constants as const
-
 
 class ApiHandlerCategories:
     """

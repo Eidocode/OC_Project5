@@ -218,10 +218,4 @@ class Product:
         del self
 
 
-# product = Product()
-# liste = product._get_from_api(const.PRODUCTS_PER_CATG)
-
-# product.set_to_db(liste)
-# product._destroy()
-
 deinit()

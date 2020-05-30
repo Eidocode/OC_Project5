@@ -1,11 +1,10 @@
+
 from category import Category
 from product import Product
 from colorama import init, deinit, Fore, Back, Style
 
 
 init(autoreset=True)
-
-
 
 
 menu_is_active = True
