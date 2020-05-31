@@ -2,7 +2,7 @@ import mysql.connector
 
 from colorama import init, deinit, Fore, Back, Style
 
-import constants as const
+import utils.constants as const
 
 
 init(autoreset=True)
