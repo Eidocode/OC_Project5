@@ -1,10 +1,8 @@
 from colorama import init, deinit, Fore, Back, Style
 
-import constants as const
-
-from database_manager import DatabaseManager
-from api_handler_products import ApiHandlerProducts
-from category import Category
+from database.database_manager import DatabaseManager
+from api.api_handler_products import ApiHandlerProducts
+from model.category import Category # List in TODO
 
 
 init(autoreset=True)
@@ -53,7 +51,18 @@ class Product:
         query_get_products = """SELECT * FROM Products"""
         
         list_products = db_manager.get_query(query_get_products)
+        db_manager._destroy()
         return list_products
+    
+    def get_one_from_db(self, product_id):
+        db_manager = DatabaseManager()
+        this_product = []
+
+        query_get_products = """SELECT * FROM Products WHERE id = """ + product_id
+        
+        this_product = db_manager.get_query(query_get_products)
+        db_manager._destroy()
+        return this_product
 
     def get_barcodes_from_db(self):
         """Returns a list with barcodes values from database
@@ -159,7 +168,7 @@ class Product:
         return product_values
 
 
-    def _get_from_api(self, nb_prod):
+    def _get_from_api(self, nb_prod, categories_in_db='default'):
         """Returns a list of products recovered from API
 
         Parameters
@@ -171,18 +180,21 @@ class Product:
         list_products = []
         barcodes = []
         category = Category()
-        categories_in_db = category.categories_in_db
+
+        if categories_in_db == 'default':
+            categories_in_db = category.categories_in_db
 
         barcodes = self.get_barcodes_from_db()
         i = 0
-        for category in categories_in_db:
-            print(Fore.BLUE + str(i+1) + " : " + category[1])
-            products = ApiHandlerProducts(category[3], nb_prod)
+
+        for cat in categories_in_db:
+            print(Fore.BLUE + str(i+1) + " : " + cat[1])
+            products = ApiHandlerProducts(cat[3], nb_prod)
             nb = 0
             for product in products.products:
                 is_viable = self.test_product(product, barcodes)
                 if is_viable:
-                    this_product = self._get_value_for_db(category, product)
+                    this_product = self._get_value_for_db(cat, product)
                     list_products.append(this_product)
                     barcodes.append(product['code'])
                     print(Fore.GREEN + str(nb+1) + ". " + product['product_name'] + " viable...")
@@ -192,8 +204,21 @@ class Product:
                     continue
             
             i += 1
+        category._destroy()
 
         return list_products
+
+    def get_all_from_a_category(self, category_id):
+        db_manager = DatabaseManager()
+        list_products = []
+
+        query_get_products = """SELECT * FROM Products WHERE category_id = """ + category_id
+        
+        list_products = db_manager.get_query(query_get_products)
+        db_manager._destroy()
+        
+        return list_products
+    
     
     def set_to_db(self, datas_to_inject):
         """Set a tuple of products to set in database

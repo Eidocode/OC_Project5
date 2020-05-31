@@ -1,9 +1,7 @@
 from colorama import init, deinit, Fore, Back, Style
 
-import constants as const
-
-from database_manager import DatabaseManager
-from api_handler_categories import ApiHandlerCategories
+from database.database_manager import DatabaseManager
+from api.api_handler_categories import ApiHandlerCategories
 
 
 init(autoreset=True)
@@ -91,10 +89,11 @@ class Category:
         
         db_manager = DatabaseManager()
         list_categories = []
-
         query_get_categories = """SELECT * FROM Categories"""
         
         list_categories = db_manager.get_query(query_get_categories)
+        db_manager._destroy()
+
         return list_categories
 
     def exist_in_db(self, json_id):
@@ -113,15 +112,22 @@ class Category:
             self.list_json_id.append(json_id)
 
         return False
+    
+    def get_one_from_db(self, id_category):
+        db_manager = DatabaseManager()
+        category_info = []
+        
+        query_get_category = """SELECT * FROM Categories WHERE id = """ + id_category
+        
+        category_info = db_manager.get_query(query_get_category)
+        db_manager._destroy()
+
+        return category_info
+
 
     def _destroy(self):
         print(Fore.LIGHTYELLOW_EX + "Instance Category has been deleted")
         del self
 
-
-# test = Category()
-# liste = test._get_from_api(const.NB_CATEGORIES_TO_GET)
-# test.set_to_db(liste)
-# test._destroy()
 
 deinit()
