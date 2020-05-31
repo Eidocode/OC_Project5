@@ -3,6 +3,8 @@ import json
 
 from random import randrange
 
+import utils.constants as const
+
 
 class ApiHandlerCategories:
     """
@@ -29,7 +31,7 @@ class ApiHandlerCategories:
     """
     
     def __init__(self, nb_cat):
-        self.nb_cat = nb_cat
+        self.nb_cat = int(nb_cat)
         self.categories = self.get_random_categories
     
     @property

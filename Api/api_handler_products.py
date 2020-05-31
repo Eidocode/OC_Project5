@@ -5,6 +5,8 @@ from random import randrange
 from math import ceil
 from colorama import init, deinit, Fore, Back, Style
 
+import utils.constants as const
+
 
 init(autoreset=True)
 
@@ -47,7 +49,7 @@ class ApiHandlerProducts:
         self.category_url = category_url
         self.nb_products = 0
         self.nb_pages = 0
-        self.nb_prod_to_get = nb_prod
+        self.nb_prod_to_get = int(nb_prod)
         self.products = self.get_random_products
         
     @property
