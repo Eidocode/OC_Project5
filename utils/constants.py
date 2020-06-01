@@ -13,3 +13,7 @@ SRV_IP = "192.168.1.77"
 USER_ID = "student"
 USER_PWD = "student"
 DB_NAME = "pur_beurre"
+
+# UI
+BUTTONS_HEIGHT = 1
+BUTTONS_WIDTH = 10

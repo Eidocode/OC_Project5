@@ -117,7 +117,7 @@ class Category:
         db_manager = DatabaseManager()
         category_info = []
         
-        query_get_category = """SELECT * FROM Categories WHERE id = """ + id_category
+        query_get_category = """SELECT * FROM Categories WHERE id = """ + str(id_category)
         
         category_info = db_manager.get_query(query_get_category)
         db_manager._destroy()

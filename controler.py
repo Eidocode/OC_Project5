@@ -4,6 +4,8 @@ from model.category import Category
 from model.product import Product
 
 
+init(autoreset=True)
+
 class Controler:
     
     def __init__(self):
@@ -117,3 +119,5 @@ class Controler:
         if int(this_product['category_id']) != int(category_id):
             return None
         return this_product
+
+deinit()

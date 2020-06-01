@@ -1,78 +1,123 @@
 import tkinter as tk
-from tkinter.filedialog import askopenfilename, asksaveasfilename
+
+from colorama import init, deinit, Fore, Back, Style
+
+import utils.constants as const
 
 from controler import Controler
 
+init(autoreset=True)
 
-controler = Controler()
+class Application:
+    def __init__(self):
+        self.window = tk.Tk()
+        self.controler = Controler()
+        self.list_box = []
+        self.selected_category = None
+        self.btn_prod_is_active = False
+        self.frame_left= None
+        # self.frame_right_upper = None
+        # self.frame_right_bottom = None
+        self.init_application(self.window)
 
-def open_file():
-    """Open a file for editing."""
-    filepath = askopenfilename(
-        filetypes=[("Text Files", "*.txt"), ("All Files", "*.*")]
-    )
-    if not filepath:
-        return
-    txt_edit.delete(1.0, tk.END)
-    with open(filepath, "r") as input_file:
-        text = input_file.read()
-        txt_edit.insert(tk.END, text)
-    window.title(f"Simple Text Editor - {filepath}")
 
-def save_file():
-    """Save the current file as a new file."""
-    filepath = asksaveasfilename(
-        defaultextension="txt",
-        filetypes=[("Text Files", "*.txt"), ("All Files", "*.*")],
-    )
-    if not filepath:
-        return
-    with open(filepath, "w") as output_file:
-        text = txt_edit.get(1.0, tk.END)
-        output_file.write(text)
-    window.title(f"Simple Text Editor - {filepath}")
+    def init_application(self, window):
+        window.title("Pur Beurre Application")
+        window.geometry('800x600')
+        window.resizable(width=0, height=0)
 
-def list_categories(list_box):
-    list_box.delete(0, tk.END)
-    categories = controler.get_all_categories_info()
+        self.build_frame_left(window)
+        self.build_main_frame(window)
 
-    for category in categories:
-        list_box.insert(tk.END, category[1])
+    def update_left_frame_widgets(self, frame):
+        for widget in frame.winfo_children():
+            widget.destroy()
+        
+        if self.btn_prod_is_active:
+            btn_state = tk.NORMAL
+        else:
+            btn_state = tk.DISABLED
+        
+        btn_categories = tk.Button(frame, text='Categories', command=lambda : self.get_categories(self.list_box),
+                                    height=const.BUTTONS_HEIGHT, width=const.BUTTONS_WIDTH)
+        btn_products = tk.Button(frame, text='Products', state=btn_state,
+                                    height=const.BUTTONS_HEIGHT, width=const.BUTTONS_WIDTH)
+        btn_exit = tk.Button(frame, text='Exit', command=quit,
+                                    height=const.BUTTONS_HEIGHT, width=const.BUTTONS_WIDTH)
+        
+        # Placements
+        btn_categories.pack(padx=10, pady=5)
+        btn_products.pack(padx=10)
+        btn_exit.pack(padx=10, pady=5, side='bottom')
+        frame.pack(side='left', fill='y')
+
+    def build_frame_left(self, window):
+        # Init elements
+        self.frame_left = tk.Frame(window, relief=tk.RAISED, bd=2)
+        self.update_left_frame_widgets(self.frame_left)
     
+    def build_main_frame(self, window):
+        frame = tk.Frame(window, relief=tk.RAISED, bd=2)
+        self.build_upper_frame(window, frame)
+        
+    def build_upper_frame(self, window, frame):
+        # Init elements
+        frame_lstbox = tk.Frame(window, relief=tk.RAISED, bd=2)
+        self.list_box = tk.Listbox(frame_lstbox, height=15, width=110, selectbackground="#d0d0d0", selectforeground="#d00000", 
+                                    selectmode="single", cursor="hand2")
+        btn_select = tk.Button(frame_lstbox, text='Select', command = lambda : self.get_selected_category(self.list_box, window, frame),
+                                    height=const.BUTTONS_HEIGHT, width=const.BUTTONS_WIDTH)
+
+        # Placements
+        frame_lstbox.pack(padx=5, pady=5, fill='x')
+        self.list_box.pack(padx=10, pady=5)
+        btn_select.pack(padx=10, pady=5, side='right')
     
+    def build_bottom_frame(self, window, frame):
+        for widget in frame.winfo_children():
+            widget.destroy()
 
-# Main Window
-window = tk.Tk()
-window.title("Pur Beurre Application")
-window.geometry('800x800')
-window.resizable(width=0, height=0)
-window.rowconfigure(0, minsize=800, weight=1)
-window.columnconfigure(1, minsize=800, weight=1)
+        text_name = str(self.selected_category['name'])
+        text_id = 'ID : ' + str(self.selected_category['id'])
+        text_jsonid = 'JSON ID : ' + str(self.selected_category['json_id'])
+        text_url = 'URL : ' + str(self.selected_category['url'])
 
-# Listboxes Frames
-frame_lstbox = tk.Frame(window, relief=tk.RAISED, bd=1)
+        # Init elements
+        frame_details = frame
+        label_name = tk.Label(frame_details, text=text_name, relief='raised', width=100, height=2, font=(None, 18, 'bold'))
+        label_id = tk.Label(frame_details, text=text_id, relief='groove', width=100, height=2, font=(None, 9))
+        label_json_id = tk.Label(frame_details, text=text_jsonid, relief='groove', width=100, height=2, font=(None, 9))
+        label_url = tk.Label(frame_details, text=text_url, relief='groove', width=100, height=2, font=(None, 9))
 
-# Listboxes
-lst_box = tk.Listbox(frame_lstbox, selectbackground="#d0d0d0", selectforeground="#d00000", 
-                        selectmode="single", cursor="hand2")
+        # Placements
+        frame_details.pack(padx=5, pady=5, expand=1, fill='both')
+        label_name.pack(padx=20, pady=20)
+        label_id.pack(padx=20, pady=10)
+        label_json_id.pack(padx=20, pady=10)
+        label_url.pack(padx=20, pady=10)
+    
+    def get_categories(self, list_box):
+        list_box.delete(0, tk.END)
+        list_categories = self.controler.get_all_categories_info()
+
+        for category in list_categories:
+            list_box.insert(tk.END, category[1])
+    
+    def get_selected_category(self, list_box, window, frame_right_bottom):
+        select = list_box.curselection()
+        indice = int(select[0]+1)
+
+        self.selected_category = self.controler.get_category_info(indice)
+        print("Vous avez selectionné la catégorie " + self.selected_category['name'])
+        
+        self.build_bottom_frame(window, frame_right_bottom)
+        self.btn_prod_is_active = True
+        self.update_left_frame_widgets(self.frame_left)
 
 
-# Button Frames
-fr_buttons = tk.Frame(window, relief=tk.RAISED, bd=2)
 
-# Buttons
-btn_categories = tk.Button(fr_buttons, text="Categories", command=lambda : list_categories(lst_box))
-btn_save = tk.Button(fr_buttons, text="Products", command=save_file)
-btn_select = tk.Button(frame_lstbox, text='Select')
 
-# Placements
-btn_categories.grid(row=0, column=0, sticky="ew", padx=5, pady=5)
-btn_save.grid(row=1, column=0, sticky="ew", padx=5)
-fr_buttons.grid(row=0, column=0, sticky="ns")
+new_app = Application()
+new_app.window.mainloop()
 
-frame_lstbox.grid(row=0, column=1, FILL='BOTH', sticky='nw')
-lst_box.grid(row=0, column=1, sticky="nsew")
-
-btn_select.grid(row=1, column = 1, sticky="nsew")
-
-window.mainloop()
+deinit()
