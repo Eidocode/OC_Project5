@@ -55,14 +55,15 @@ class Controler:
     
     def get_all_categories_info(self):
         category = Category()
-        
-        categories = category.get_all_from_db()
+        categories_get = category.get_all_from_db()
         category._destroy()
 
-        for cat in categories:
+        for cat in categories_get:
             cat_id = cat[0]
             cat_name = cat[1]
             print(str(cat_id) + " : " + cat_name)
+        
+        return categories_get
     
     def get_category_info(self, id_category):
         category = Category()
