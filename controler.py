@@ -97,6 +97,7 @@ class Controler:
         
         print("--")
         print(str(len(products)) + " produits présents dans cette catégories")
+        return products
     
     def get_product_info(self, product_id, category_id):
         product = Product()

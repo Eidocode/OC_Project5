@@ -14,6 +14,7 @@ class Application:
         self.controler = Controler()
         self.list_box = []
         self.selected_category = None
+        self.selected_product = None
         self.btn_prod_is_active = False
         self.frame_left= None
         # self.frame_right_upper = None
@@ -40,7 +41,7 @@ class Application:
         
         btn_categories = tk.Button(frame, text='Categories', command=lambda : self.get_categories(self.list_box),
                                     height=const.BUTTONS_HEIGHT, width=const.BUTTONS_WIDTH)
-        btn_products = tk.Button(frame, text='Products', state=btn_state,
+        btn_products = tk.Button(frame, text='Products', state=btn_state, command = lambda : self.get_products(self.list_box),
                                     height=const.BUTTONS_HEIGHT, width=const.BUTTONS_WIDTH)
         btn_exit = tk.Button(frame, text='Exit', command=quit,
                                     height=const.BUTTONS_HEIGHT, width=const.BUTTONS_WIDTH)
@@ -113,6 +114,23 @@ class Application:
         self.build_bottom_frame(window, frame_right_bottom)
         self.btn_prod_is_active = True
         self.update_left_frame_widgets(self.frame_left)
+
+    def get_products(self, list_box):
+        list_box.delete(0, tk.END)
+        list_products = self.controler.get_all_products_info(str(self.selected_category['id']))
+
+        for product in list_products:
+            list_box.insert(tk.END, product[1])
+    
+    def get_selected_product(self, list_box, window, frame_right_bottom):
+        select = list_box.curselection()
+        indice = int(select[0]+1)
+
+        self.selected_product = self.controler.get_product_info(indice, str(self.selected_category['id']))
+        print("Vous avez selectionné le produit " + self.selected_product['name'])
+
+        self.build_bottom_frame(window, frame_right_bottom)
+    
 
 
 
