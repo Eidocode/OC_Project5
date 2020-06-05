@@ -65,26 +65,31 @@ Exécution du script **SQL** depuis la console **MySQL** :
 
 Cela implique que la console **MySQL** soit lancée depuis le même chemin que le script **SQL**. Sinon, il faudra spécifier le chemin lors de l'exécution.
 
-### Ajout des catégories dans la base :
 
-L'ajout des catégories dans la base se fait par l'intermédiaire de deux fichiers python "**./category.py**" et "**./inject_categories.py**".
+## Application
 
- - **./category.py** : 
- Contient la classe **Category**, utilisée pour sélectionner les catégories qui seront injectées dans la Table **Categories** de la base. La méthode **_get_categories** se charge de récupérer la liste des différentes catégories depuis l'URL https://fr.openfoodfacts.org/categories.json. Les catégories sont ici filtrées, notamment pour ne garder que celles dont la clé ['id'] commence par '**fr**' et également celles qui ont un total de produits minimum (il est de 100 par défaut, à voir si nous le rendrons plus dynamique par la suite dans l'application). Une fois filtrées, la méthode **get_random_categories** sélectionne (aléatoirement) un nombre de catégorie défini en paramètre lors de l'instanciation de la classe.  
- 
- - **./inject_categories.py** :
- C'est dans ce fichier que se fait l'instanciation de la classe **Category**, c'est également par l'intermédiaire de celui-ci que nous pouvons nous connecter à la base et y injecter les catégories par l'intermédiaire de requêtes SQL. 
+### Packages :
 
-### Ajout des produits dans la base :
+L'application est composée de 3 différents packages **Api**, **Model** et **Database**.
 
-A l'instar des catégories, l'ajout des produits se fait par l'intermédiaire de deux fichiers python "**./products.py**" et "**./inject_products.py**".
+- **Api** :  Contient deux classes **Api_Handler_Categories** et **Api_Handler_Products** dédiées à la manipulation des catégories et produits  côté API.
 
- - **./products.py** : 
-Contient la classe **Product**, utilisée pour retourner un produit lors de l'instanciation qui pourra par la suite être injecté dans la Table **Products** de la base. La méthode **_get_products** se charge de récupérer les produits contenus visibles depuis l'URL (**exemple** :  https://fr.openfoodfacts.org/categorie/sauces-tomates-au-basilic.json) renseignée en paramètre lors de l'instanciation de la classe. 
-Les produits sont affichés par 20, pour accéder aux suivants, il est nécessaire de changer de page (l'exemple ci-dessus permet d'accéder à la première page). Pour cela, il est nécessaire de modifier l'URL pour indiquer une page différente, si nous reprenons l'exemple précédent, il faudra ajouter "**/2**" avant "**.json**". L'algorithme se charge donc de récupérer le nombre de produits total contenus dans la catégorie que l'on divise par 20. L'arrondi supérieur du résultat obtenu permet alors d'obtenir le nombre de page que la catégorie contient. Un numéro de page est alors défini aléatoirement afin de récupérer la liste des produits qu'elle contient. Un produit est alors sélectionné (également aléatoirement) dans cette liste.
+- **Model** :  Contient deux classes **Category** et **Product** chargées de la gestion des catégories et produits côté base de données. Elles permettent notamment de retourner un ou plusieurs éléments de la base de données (Get), voir d'ajouter un ou plusieurs éléments à celle-ci (Set) selon certains critères définis.
 
- - **./inject_products.py** : 
-L'instanciation de la classe **Product** se fait dans ce fichier. Ce fichier se connecte à la base pour notamment récupérer la liste des catégories préalablement injectées. Le champ **url** des catégories est utilisé lors de l'instanciation de la classe, les produits récupérés sont alors injectés dans la base.
-Plusieurs tests sont effectués dans ce fichier, notamment pour vérifier que le produit n'est pas déjà présent dans la base pour éviter les doublons. Certains produits (très peu) sont apparus sans nom dans le **JSON**, ce qui peut poser problème pour l'application... Ces produits sont donc filtrés pour éviter un problème éventuel. 
-Le nombre de produits à injecter dans la base est maintenant défini dans ce fichier (dans la version précédente, c'était géré par la classe **Products**). 
-Lorsque le script rencontre une erreur dans les tests, il essaye de trouver un autre produit "éventuellement" conforme. Au bout de 3 essais, l'itération est passée. Si le script devait récupérer 10 produits, il y en aura donc un de moins etc...
+- **Database** :  Contient une classe **DatabaseManager** qui sera instanciée lorsqu'il sera nécessaire de communiquer avec la base SQL pour récupérer des éléments (méthode **get_query**) ou en ajouter (méthode **set_query**).
+
+
+### Controller : 
+
+Le controller **./controller.py** est constitué d'une classe chargée de faire communiquer tous les éléments de l'application. Il s'occupe par exemple de récupérer les éléments de l'Api (par l'intermédiaire du package **Api**), puis de les injecter dans la base de données (par l'intermédiaire des packages **Model** et **Database**). Toute la logique nécessaire au fonctionnement de l'application s'y trouve.
+
+
+### Interfaces : 
+
+L'application contient deux interfaces utilisateurs qui, se reposant sur le controller, proposent les mêmes fonctionnalités. Une première en mode **"terminal"** (**./terminal_view.py**) , et une autre, **"graphique"** (**./ui_view.py**).
+
+- **Terminal** :  En utilisant cette interface, l'utilisateur interagit grâce aux touches de son clavier. Le menu lui indique quelles sont ses possibilités, il saisit alors son choix qui se fait exclusivement via le pavé numérique.
+
+- **GUI** : L'interface graphique propose donc, par l'intermédiaire d'une classe **Application**,  les mêmes fonctionnalités que la version **terminal**. La différence étant qu'elle est affichée dans une fenêtre à l'image du système d'exploitation. L'utilisateur interagit ici majoritairement avec sa souris grâce à des boutons et des listes à parcourir notamment. La bibliothèque **Tkinter** (intégrée nativement à Python) est utilisée ici pour dessiner et disposer les éléments de l'interface graphique.  
+
+
