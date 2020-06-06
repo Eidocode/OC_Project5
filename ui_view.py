@@ -10,13 +10,13 @@ init(autoreset=True)
 
 class Application:
     def __init__(self):
-        self.window = tk.Tk()
-        self.controler = Controler()
-        self.list_box = []
-        self.selected_category = None
-        self.selected_product = None
-        self.btn_prod_is_active = False
-        self.frame_left= None
+        self.window = tk.Tk()  # Main Window
+        self.controler = Controler()  # Controller instance
+        self.list_box = []  # List box uses for Categories and products
+        self.selected_category = None  # The selected category in app
+        self.selected_product = None  # The selected product in app
+        self.btn_prod_is_active = False  # Return True if products button is active, else return False
+        self.frame_left= None  # Left Frame that contains buttons menu
         # self.frame_right_upper = None
         # self.frame_right_bottom = None
         self.init_application(self.window)
