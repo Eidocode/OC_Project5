@@ -86,7 +86,6 @@ class Controler:
 
     def get_all_products_info(self, category_id):
         product = Product()
-
         products = product.get_all_from_a_category(category_id)
         product._destroy()
 
@@ -98,6 +97,21 @@ class Controler:
         print("--")
         print(str(len(products)) + " produits présents dans cette catégories")
         return products
+    
+    def get_all_favorites_info(self):
+        product = Product()
+        favorites = product.get_favorites_from_db()
+        product._destroy()
+
+        for fav in favorites:
+            fav_id = fav[0]
+            fav_name = fav[2]
+            print(str(fav_id) + " : " + fav_name)
+        
+        print("--")
+        print(str(len(favorites)) + " produits présents dans la liste des favoris")
+        return favorites
+
     
     def get_product_info(self, product_id, category_id):
         product = Product()
@@ -120,5 +134,8 @@ class Controler:
         if int(this_product['category_id']) != int(category_id):
             return None
         return this_product
+    
+   
+
 
 deinit()

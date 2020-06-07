@@ -58,7 +58,7 @@ class Product:
         db_manager = DatabaseManager()
         this_product = []
 
-        query_get_products = """SELECT * FROM Products WHERE id = """ + product_id
+        query_get_products = """SELECT * FROM Products WHERE id = """ + str(product_id)
         
         this_product = db_manager.get_query(query_get_products)
         db_manager._destroy()
@@ -167,7 +167,6 @@ class Product:
         
         return product_values
 
-
     def _get_from_api(self, nb_prod, categories_in_db='default'):
         """Returns a list of products recovered from API
 
@@ -218,7 +217,20 @@ class Product:
         db_manager._destroy()
         
         return list_products
-    
+
+    def get_favorites_from_db(self):
+        db_manager = DatabaseManager()
+        list_fav = []
+
+        query_get_favorites = """SELECT Favoris.id, Favoris.product_id, Products.name, Products.brand, 
+                                    Products.description, Products.nutriscore, Products.places, 
+                                    Products.stores, Products.barcode, Favoris.added_date FROM Products 
+                                    INNER JOIN Favoris ON Favoris.product_id = Products.id"""
+        
+        list_fav = db_manager.get_query(query_get_favorites)
+        db_manager._destroy()
+
+        return list_fav
     
     def set_to_db(self, datas_to_inject):
         """Set a tuple of products to set in database
