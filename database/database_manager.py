@@ -66,7 +66,7 @@ class DatabaseManager:
 
         return result
 
-    def set_query(self, query, datas):
+    def set_query(self, query, datas, many=True):
         """Returns results of a "get" query
         
         Parameters
@@ -83,10 +83,11 @@ class DatabaseManager:
             print(Fore.GREEN + "Connection Established...")
             print(type(datas))
             print(datas)
-            if type(datas) != list or type(datas) != tuple:
-                cursor.execute(query, datas)
-            else:
+            if many:
                 cursor.executemany(query, datas)
+            else:
+                cursor.execute(query, datas)
+                
             print(Fore.GREEN + str(cursor.rowcount) + " QUERY SUCCESSFULL...")
             self.sql_connx.commit()
             cursor.close()

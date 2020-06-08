@@ -144,7 +144,7 @@ class Application(State_Machine):
             label_json_id = tk.Label(frame_details, text=text_jsonid, relief='groove', width=100, height=2, font=(None, 9))
             label_url = tk.Label(frame_details, text=text_url, relief='groove', width=100, height=2, font=(None, 9))
 
-            btn_add_cats = tk.Button(frame_details, text='Add 5 Cat.', command = lambda : self.add_5_items,
+            btn_add_cats = tk.Button(frame_details, text='Add 5 Cat.', command = lambda : self.add_5_items(),
                                     height=const.BUTTONS_HEIGHT, width=const.BUTTONS_WIDTH)
             # Placements
             frame_details.pack(padx=5, pady=5, expand=1, fill='both')
@@ -271,22 +271,23 @@ class Application(State_Machine):
 
     def show_selected_item(self, list_box, window, frame_right_bottom):
         select = list_box.curselection()
-        indice = int(select[0]+1)
+        indice = int(select[0])
+        indice_db = indice + 1
 
         if self.current_state == State.SHOW_CATEGORIES:
-            self.selected_category = self.controler.get_category_info(indice)
+            self.selected_category = self.controler.get_category_info(indice_db)
             print("Vous avez selectionné la catégorie " + self.selected_category['name'])
             self.btn_prod_is_active = True
             self.update_left_frame_widgets(self.frame_left)
 
         elif self.current_state == State.SHOW_PRODUCTS:
-            product = self.lst_prod_in_cat[int(select[0])]
+            product = self.lst_prod_in_cat[indice]
             product_id = int(product[0])
             self.selected_product = self.controler.get_product_info(product_id, str(self.selected_category['id']))
             print("Vous avez selectionné le produit " + self.selected_product['name'])
         
         elif self.current_state == State.SHOW_FAVORITES:
-            self.selected_favorite = self.lst_prod_in_fav[0]
+            self.selected_favorite = self.lst_prod_in_fav[indice]
             print("Vous avez selectionné le favoris " + self.selected_favorite['name'])
 
         self.build_bottom_frame(window, frame_right_bottom)

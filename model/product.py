@@ -247,15 +247,17 @@ class Product:
                             (name, brand, description, nutriscore, category_id, places, stores, barcode)
                             VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"""
         
-        db_manager.set_query(insert_query, datas_to_inject)
+        db_manager.set_query(insert_query, datas_to_inject, True)
         db_manager._destroy()
     
     def set_to_fav(self, product):
         db_manager = DatabaseManager()
 
-        insert_query = """INSERT INTO Favoris(added_date, product_id) VALUES(DATE(NOW()), %s)"""
+        insert_query = """INSERT INTO Favoris
+                            (product_id)
+                            VALUES (%s)"""
 
-        db_manager.set_query(insert_query, str(product['id']))
+        db_manager.set_query(insert_query, (str(product['id']),), False)
         db_manager._destroy()
     
     def _destroy(self):
