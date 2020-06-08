@@ -218,7 +218,7 @@ class Product:
         
         return list_products
 
-    def get_favorites_from_db(self):
+    def get_fav_from_db(self):
         db_manager = DatabaseManager()
         list_fav = []
 
@@ -248,6 +248,14 @@ class Product:
                             VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"""
         
         db_manager.set_query(insert_query, datas_to_inject)
+        db_manager._destroy()
+    
+    def set_to_fav(self, product):
+        db_manager = DatabaseManager()
+
+        insert_query = """INSERT INTO Favoris(added_date, product_id) VALUES(DATE(NOW()), %s)"""
+
+        db_manager.set_query(insert_query, str(product['id']))
         db_manager._destroy()
     
     def _destroy(self):

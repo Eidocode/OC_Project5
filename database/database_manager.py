@@ -81,7 +81,12 @@ class DatabaseManager:
             self.sql_connx
             cursor = self.sql_connx.cursor()
             print(Fore.GREEN + "Connection Established...")
-            cursor.executemany(query, datas)
+            print(type(datas))
+            print(datas)
+            if type(datas) != list or type(datas) != tuple:
+                cursor.execute(query, datas)
+            else:
+                cursor.executemany(query, datas)
             print(Fore.GREEN + str(cursor.rowcount) + " QUERY SUCCESSFULL...")
             self.sql_connx.commit()
             cursor.close()

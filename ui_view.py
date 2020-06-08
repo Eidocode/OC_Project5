@@ -171,7 +171,9 @@ class Application(State_Machine):
             label_barcode = tk.Label(frame_details, text=text_barcode, relief='groove', width=100, height=2, font=(None, 9))
             label_desciption = tk.Label(frame_details, text=text_description, relief='groove', width=100, height=2, font=(None, 9))
 
-            btn_add_prods = tk.Button(frame_details, text='Add 5 Prod.', command = lambda : self.add_5_items() ,
+            btn_add_prods = tk.Button(frame_details, text='Add 5 Prod.', command = lambda : self.add_5_items(),
+                                    height=const.BUTTONS_HEIGHT, width=const.BUTTONS_WIDTH)
+            btn_add_fav = tk.Button(frame_details, text='Add to Fav.', command = lambda : self.add_to_fav(),
                                     height=const.BUTTONS_HEIGHT, width=const.BUTTONS_WIDTH)
             # Placements
             frame_details.pack(padx=5, pady=5, expand=1, fill='both')
@@ -181,7 +183,8 @@ class Application(State_Machine):
             label_stores.pack(padx=20, pady=10)
             label_barcode.pack(padx=20, pady=10)
             label_desciption.pack(padx=20, pady=10)
-            btn_add_prods.pack(side="bottom", padx=10, pady=5)
+            btn_add_prods.pack(side="left", padx=10, pady=5)
+            btn_add_fav.pack(side="right", padx=10, pady=5)
         
         elif self.current_state == State.SHOW_FAVORITES:
             favorite = self.selected_favorite
@@ -210,9 +213,6 @@ class Application(State_Machine):
             label_barcode.pack(padx=20, pady=5)
             label_desciption.pack(padx=20, pady=5)
             label_date.pack(padx=20, pady=5)
-            btn_add_prods.pack(side="bottom", padx=10, pady=5)
-
-
     
     def add_5_items(self):
         if self.current_state == State.SHOW_CATEGORIES:
@@ -264,7 +264,10 @@ class Application(State_Machine):
             product['added_date'] = p[9]
             self.lst_prod_in_fav.append(product)
             list_box.insert(tk.END, p[2])
-
+    
+    def add_to_fav(self):
+        print(self.selected_product)
+        self.controler.set_product_to_fav(self.selected_product)
 
     def show_selected_item(self, list_box, window, frame_right_bottom):
         select = list_box.curselection()
@@ -284,9 +287,6 @@ class Application(State_Machine):
         
         elif self.current_state == State.SHOW_FAVORITES:
             self.selected_favorite = self.lst_prod_in_fav[0]
-            print("#########")
-
-            print(self.selected_favorite)
             print("Vous avez selectionné le favoris " + self.selected_favorite['name'])
 
         self.build_bottom_frame(window, frame_right_bottom)

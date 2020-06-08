@@ -41,6 +41,12 @@ class Controler:
         product._destroy()
 
         print("Controler : set_products done...")
+    
+    def set_product_to_fav(self, product_to_set):
+        product = Product()
+        product.set_to_fav(product_to_set)
+        product._destroy()
+        print(product_to_set['name'] + ' a été ajouté aux favoris.')
 
     def set_products_in_category(self, nb_products, id_category):
         product = Product()
@@ -100,7 +106,7 @@ class Controler:
     
     def get_all_favorites_info(self):
         product = Product()
-        favorites = product.get_favorites_from_db()
+        favorites = product.get_fav_from_db()
         product._destroy()
 
         for fav in favorites:
@@ -112,7 +118,6 @@ class Controler:
         print(str(len(favorites)) + " produits présents dans la liste des favoris")
         return favorites
 
-    
     def get_product_info(self, product_id, category_id):
         product = Product()
         this_product = {}
