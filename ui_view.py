@@ -10,6 +10,89 @@ from state import State_Machine, State
 
 init(autoreset=True)
 
+class DrawUI(State_Machine):
+    def __init__(self):
+        super().__init__()  # inherits from class State_Machine
+        self.window = tk.Tk()  # Main Window
+
+        self.btn_prod_is_active = False  # Return True if products button is active, else return False
+
+        self.frame_menu = None  # Left frame that contains buttons menu
+        self.frame_lstbox = None
+        self.frame_description = None  # Right bottom frame contains description
+        self.init_application(self.window)
+
+
+    def init_application(self, window):
+        window.title('Pur Beurre Application')
+        window.geometry('1024x768')
+        window.resizable(width=0, height=0)
+        
+        # self.update_state()
+        self.draw_frame_menu(window)
+        self.draw_content_frame(window)
+    
+    def clear_frame(self, frame):
+        for widget in frame.winfo_children():
+            widget.destroy()
+    
+    def create_button(self, frm, txt, cmd):
+        return tk.Button(frm, text=txt, command=cmd,
+                            height=const.BUTTONS_HEIGHT, 
+                            width=const.BUTTONS_WIDTH)
+
+    def draw_frame_menu(self, window):
+        # Init elements
+        self.frame_menu = tk.Frame(window, relief=tk.RAISED, bd=2)
+        self.update_menu_widgets(self.frame_menu)
+    
+    def update_menu_widgets(self, frame):
+        self.clear_frame(frame)
+        
+        if self.btn_prod_is_active:
+            btn_state = tk.NORMAL
+        else:
+            btn_state = tk.DISABLED
+        
+        btn_categories = self.create_button(frame, 'Categories', lambda:self.show_categories(self.list_box))
+        btn_products = self.create_button(frame, 'Products', lambda:self.show_products(self.list_box))
+        btn_favorites = self.create_button(frame, 'Favorites', lambda:self.show_favorites(self.list_box))
+        btn_exit = self.create_button(frame, 'Exit', quit)
+        
+        # Placements
+        btn_categories.pack(padx=10, pady=5)
+        btn_products.pack(padx=10)
+        btn_favorites.pack(padx=10, pady=5)
+        btn_exit.pack(padx=10, pady=5, side='bottom')
+        frame.pack(side='left', fill='y')
+    
+    def draw_content_frame(self, window):
+        frame_lstbox = tk.Frame(window, relief=tk.RAISED, bd=2)
+        self.frame_lstbox = frame_lstbox
+        frame_description = tk.Frame(window, relief=tk.RAISED, bd=2)
+        self.frame_description = frame_description
+        self.update_lstbox_widgets(window, frame_lstbox, frame_description)
+
+    def update_lstbox_widgets(self, window, frame_up, frame_bot):
+        self.clear_frame(frame_up)
+        # Init elements
+        self.list_box = tk.Listbox(frame_up, height=15, width=110, selectbackground="#d0d0d0", selectforeground="#d00000", 
+                                    selectmode="single", cursor="hand2")
+        btn_select = self.create_button(frame_up, 'Select', lambda:self.show_selected_item(self.list_box, window, frame_bot))
+        # Placements
+        frame_up.pack(padx=5, pady=5, fill='x')
+        self.list_box.pack(padx=10, pady=5)
+        btn_select.pack(padx=10, pady=5, side='right')
+
+
+
+    
+
+
+
+
+        
+
 class Application(State_Machine):
     def __init__(self):
         super().__init__()  # inherits from class State_Machine
@@ -21,22 +104,8 @@ class Application(State_Machine):
         self.selected_product = None  # The selected product in app
         self.lst_prod_in_fav = []
         self.selected_favorite = None
-        self.btn_prod_is_active = False  # Return True if products button is active, else return False
+        
         self.current_state = None  # Application current state
-        
-        self.frame_left = None  # Left frame that contains buttons menu
-        self.frame_right_bottom = None  # Right bottom frame contains description
-        self.init_application(self.window)
-
-
-    def init_application(self, window):
-        window.title('Pur Beurre Application')
-        window.geometry('1024x768')
-        window.resizable(width=0, height=0)
-        
-        self.update_state()
-        self.build_left_frame(window)
-        self.build_right_frame(window)
 
     def update_state(self):
         state = self.get_state()
@@ -54,41 +123,11 @@ class Application(State_Machine):
             
             self.current_state = state
 
-    def build_left_frame(self, window):
-        # Init elements
-        self.frame_left = tk.Frame(window, relief=tk.RAISED, bd=2)
-        self.update_left_frame_widgets(self.frame_left)
+    
 
-    def update_left_frame_widgets(self, frame):
-        for widget in frame.winfo_children():
-            widget.destroy()
+    
         
-        if self.btn_prod_is_active:
-            btn_state = tk.NORMAL
-        else:
-            btn_state = tk.DISABLED
-        
-        btn_categories = tk.Button(frame, text='Categories', command=lambda : self.show_categories(self.list_box),
-                                    height=const.BUTTONS_HEIGHT, width=const.BUTTONS_WIDTH)
-        btn_products = tk.Button(frame, text='Products', state=btn_state, command = lambda : self.show_products(self.list_box),
-                                    height=const.BUTTONS_HEIGHT, width=const.BUTTONS_WIDTH)
-        btn_favorites = tk.Button(frame, text='Favorites', command = lambda : self.show_favorites(self.list_box),
-                                    height=const.BUTTONS_HEIGHT, width=const.BUTTONS_WIDTH)
-        btn_exit = tk.Button(frame, text='Exit', command=quit,
-                                    height=const.BUTTONS_HEIGHT, width=const.BUTTONS_WIDTH)
-        
-        # Placements
-        btn_categories.pack(padx=10, pady=5)
-        btn_products.pack(padx=10)
-        btn_favorites.pack(padx=10, pady=5)
-        btn_exit.pack(padx=10, pady=5, side='bottom')
-        frame.pack(side='left', fill='y')
-        
-    def build_right_frame(self, window):
-        frame_lstbox = tk.Frame(window, relief=tk.RAISED, bd=2)
-        frame_description = tk.Frame(window, relief=tk.RAISED, bd=2)
-        self.frame_right_bottom = frame_description
-        self.build_upper_frame(window, frame_lstbox, frame_description)
+    
         
     def build_upper_frame(self, window, frame_up, frame_bot):
         for widget in frame_up.winfo_children():
@@ -103,9 +142,7 @@ class Application(State_Machine):
         self.list_box.pack(padx=10, pady=5)
         btn_select.pack(padx=10, pady=5, side='right')
 
-    def clear_frame(self, frame):
-        for widget in frame.winfo_children():
-            widget.destroy()
+    
     
     def build_bottom_frame(self, window, frame):
         for widget in frame.winfo_children():
@@ -278,7 +315,7 @@ class Application(State_Machine):
 
 
 
-new_app = Application()
+new_app = DrawUI()
 new_app.window.mainloop()
 
 deinit()
