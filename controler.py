@@ -140,7 +140,5 @@ class Controler:
             return None
         return this_product
     
-   
-
 
 deinit()

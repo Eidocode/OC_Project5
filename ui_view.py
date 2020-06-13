@@ -1,32 +1,14 @@
 import tkinter as tk
 
-from enum import Enum, auto
 from colorama import init, deinit, Fore, Back, Style
 
 import utils.constants as const
 
 from controler import Controler
+from state import State_Machine, State
+
 
 init(autoreset=True)
-
-
-class State(Enum):
-    IDLE = auto()
-    SHOW_CATEGORIES = auto()
-    SHOW_PRODUCTS = auto()
-    SHOW_FAVORITES = auto()
-
-
-class State_Machine:
-    def __init__(self):
-        self.__state = State.IDLE
-    
-    def set_state(self, state):
-        self.__state = state
-    
-    def get_state(self):
-        return self.__state
-
 
 class Application(State_Machine):
     def __init__(self):
