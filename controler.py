@@ -1,4 +1,5 @@
 from colorama import init, deinit, Fore, Back, Style
+from random import randrange
 
 from model.category import Category
 from model.product import Product
@@ -134,7 +135,6 @@ class Controler:
         product = Product()
         this_product = {}
         product_info = product.get_one_from_db(product_id)
-
         for p in product_info:
             this_product['id'] = p[0]
             this_product['name'] = p[1]
@@ -145,12 +145,38 @@ class Controler:
             this_product['places'] = p[6]
             this_product['stores'] = p[7]
             this_product['barcode'] = p[8]
-        
         product._destroy()
-
         if int(this_product['category_id']) != int(category_id):
             return None
         return this_product
     
+    def get_sub_product(self, product, list_prod):
+        nutri_prod = product['nutriscore']
+        list_sub = []
+        this_product = {}
+
+        for prod in list_prod:
+            nutri_sub = prod[4]
+            if nutri_prod != None:
+                if nutri_sub != None:
+                    if nutri_sub <= nutri_prod:
+                        list_sub.append(prod)
+            else :
+                list_sub.append(prod)
+
+        index = randrange(0, len(list_sub)-1)
+        prod = list_sub[index]
+        this_product['id'] = prod[0]
+        this_product['name'] = prod[1]
+        this_product['brand'] = prod[2]
+        this_product['description'] = prod[3]
+        this_product['nutriscore'] = prod[4]
+        this_product['category_id'] = prod[5]
+        this_product['places'] = prod[6]
+        this_product['stores'] = prod[7]
+        this_product['barcode'] = prod[8]
+
+        return this_product
+
 
 deinit()
