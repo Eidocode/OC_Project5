@@ -109,14 +109,26 @@ class Controler:
         favorites = product.get_fav_from_db()
         product._destroy()
 
-        for fav in favorites:
-            fav_id = fav[0]
-            fav_name = fav[2]
-            print(str(fav_id) + " : " + fav_name)
+        list_to_return = []
+
+        for f in favorites:
+            fav = {}
+            fav['fav_id'] = f[0]
+            fav['prod_id'] = f[1]
+            fav['name'] = f[2]
+            fav['brand'] = f[3]
+            fav['description'] = f[4]
+            fav['nutriscore'] = f[5]
+            fav['places'] = f[6]
+            fav['stores'] = f[7]
+            fav['barcode'] = f[8]
+            fav['added_date'] = f[9]
+            list_to_return.append(fav)
+            print(str(fav['fav_id']) + " : " + fav['name'])
         
         print("--")
         print(str(len(favorites)) + " produits présents dans la liste des favoris")
-        return favorites
+        return list_to_return
 
     def get_product_info(self, product_id, category_id):
         product = Product()
