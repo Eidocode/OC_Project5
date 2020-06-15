@@ -19,6 +19,12 @@ class Product:
 
     Methods
     -------
+    get_all_from_db
+        Returns a list containing all products from database
+
+    get_one_from_db(product_id)
+        Returns a product from database defined by product_id
+
     get_barcodes_from_db
         Returns a list with barcodes values from database
     
@@ -36,15 +42,26 @@ class Product:
     
     _get_from_api(nb_prod)
         Returns a list of products recovered from API
+
+    get_all_from_a_category(category_id)
+        Returns a list containing all products in a category, defined by category_id
+
+    get_fav_from_db(self):
+        Returns a list containing all products from table Favoris
     
     set_to_db(datas_to_inject)
         Set a tuple of products to set in database
+    
+    set_to_fav(self, product):
+        Set product to database in table Favoris
     """
     
     def __init__(self):
         self.products_in_db = self.get_all_from_db()
 
     def get_all_from_db(self):
+        """Returns a list containing all products from database
+        """
         db_manager = DatabaseManager()
         list_products = []
 
@@ -55,6 +72,14 @@ class Product:
         return list_products
     
     def get_one_from_db(self, product_id):
+        """Returns a product from database
+
+        Parameters
+        ----------
+        product_id : int
+            ID of the product to get
+        """
+        
         db_manager = DatabaseManager()
         this_product = []
 
@@ -208,6 +233,14 @@ class Product:
         return list_products
 
     def get_all_from_a_category(self, category_id):
+        """Returns a list containing all products in a category
+
+        Parameters
+        ----------
+        category_id : int
+            ID of the category where all products will be returned
+        """
+
         db_manager = DatabaseManager()
         list_products = []
 
@@ -219,6 +252,8 @@ class Product:
         return list_products
 
     def get_fav_from_db(self):
+        """Returns a list containing all products from table Favoris
+        """
         db_manager = DatabaseManager()
         list_fav = []
 
@@ -233,7 +268,7 @@ class Product:
         return list_fav
     
     def set_to_db(self, datas_to_inject):
-        """Set a tuple of products to set in database
+        """Set a tuple of products in database
 
         Parameters
         ----------
@@ -251,6 +286,13 @@ class Product:
         db_manager._destroy()
     
     def set_to_fav(self, product):
+        """Set product to database in table Favoris
+
+        Parameters
+        ----------
+        product : tuple
+            Contains values to be injected in table Favoris
+        """
         db_manager = DatabaseManager()
 
         insert_query = """INSERT INTO Favoris

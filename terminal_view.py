@@ -23,6 +23,7 @@ def menu2():
     print("1 : Afficher tous les produits")
     print("2 : Ajouter des produits")
     print("3 : Consulter un produit")
+    print("4 : Ajouter un favori")
     print("--")
     print("0 : Return")
     print("--")

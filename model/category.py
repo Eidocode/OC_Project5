@@ -33,6 +33,9 @@ class Category:
     
     exist_in_db
         Check if json_id exists in database and returns True or False
+    
+    get_one_from_db(id_category)
+        Returns one category defined by id_category from database
     """
     
     def __init__(self):
@@ -114,6 +117,13 @@ class Category:
         return False
     
     def get_one_from_db(self, id_category):
+        """Returns one category defined by id_category from database
+
+        Parameters
+        ----------
+        id_category : int
+            Category ID where the product will be returned
+        """
         db_manager = DatabaseManager()
         category_info = []
         

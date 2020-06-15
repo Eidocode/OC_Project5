@@ -135,17 +135,24 @@ class Controler:
         product = Product()
         this_product = {}
         product_info = product.get_one_from_db(product_id)
-        for p in product_info:
-            this_product['id'] = p[0]
-            this_product['name'] = p[1]
-            this_product['brand'] = p[2]
-            this_product['description'] = p[3]
-            this_product['nutriscore'] = p[4]
-            this_product['category_id'] = p[5]
-            this_product['places'] = p[6]
-            this_product['stores'] = p[7]
-            this_product['barcode'] = p[8]
         product._destroy()
+
+        print("HEYYY" + str(len(product_info)))
+        
+        if len(product_info) != 0:
+            for p in product_info:
+                this_product['id'] = p[0]
+                this_product['name'] = p[1]
+                this_product['brand'] = p[2]
+                this_product['description'] = p[3]
+                this_product['nutriscore'] = p[4]
+                this_product['category_id'] = p[5]
+                this_product['places'] = p[6]
+                this_product['stores'] = p[7]
+                this_product['barcode'] = p[8]
+        else:
+            return None
+        
         if int(this_product['category_id']) != int(category_id):
             return None
         return this_product
