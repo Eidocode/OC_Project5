@@ -107,12 +107,12 @@ class UI_Manager(State_Machine):
         elif self.get_state() == State.SHOW_PRODUCTS:
             product = self.selected_product
             print("DRAW CONTENT PROD")
-            self.display_product_info()
+            self.display_products_info()
         elif self.get_state() == State.SHOW_FAVORITES:
             favorite = self.selected_favorite
             print("DRAW CONTENT FAV")
-            self.display_favorite_info()
-    
+            self.display_products_info()
+        
     def display_category_info(self):
         category = self.selected_category
 
@@ -131,6 +131,47 @@ class UI_Manager(State_Machine):
         label_id.pack(padx=20, pady=10)
         label_json_id.pack(padx=20, pady=10)
         label_url.pack(padx=20, pady=10)
+
+    def display_products_info(self):
+        product = None
+        if self.get_state() == State.SHOW_PRODUCTS:
+            product = self.selected_product
+        elif self.get_state() == State.SHOW_PRODUCTS:
+            product = self.selected_favorite
+
+        text_name = str(product['name'])
+        text_score = 'Nutriscore : ' + str(product['nutriscore']).upper()
+        text_places = 'Ville(s) : ' + str(product['places'])
+        text_stores = 'Magasin(s) : ' + str(product['stores'])
+        text_barcode = 'Code barre : ' + str(product['barcode'])
+        text_description = 'Description : ' + str(product['description'])
+        # Init elements
+        label_name = tk.Label(self.frame_description, text=text_name, relief='raised', width=100, height=2, font=(None, 18, 'bold'))
+        label_score = tk.Label(self.frame_description, text=text_score, relief='groove', width=100, height=2, font=(None, 9))
+        label_places = tk.Label(self.frame_description, text=text_places, relief='groove', width=100, height=2, font=(None, 9))
+        label_stores = tk.Label(self.frame_description, text=text_stores, relief='groove', width=100, height=2, font=(None, 9))
+        label_barcode = tk.Label(self.frame_description, text=text_barcode, relief='groove', width=100, height=2, font=(None, 9))
+        label_description = tk.Label(self.frame_description, text=text_description, relief='groove', width=100, height=2, font=(None, 9))
+        # Placements
+        self.frame_description.pack(padx=5, pady=5, expand=1, fill='both')
+        label_name.pack(padx=20, pady=20)
+        label_score.pack(padx=20, pady=10)
+        label_places.pack(padx=20, pady=10)
+        label_stores.pack(padx=20, pady=10)
+        label_barcode.pack(padx=20, pady=10)
+        label_description.pack(padx=20, pady=10)
+
+        if self.get_state() == State.SHOW_PRODUCTS:
+            btn_add_fav = self.create_button(self.frame_description, 'Add to Fav.', lambda:self.add_to_fav(self.selected_product))
+            btn_get_sub = self.create_button(self.frame_description, 'Get Sub.', lambda:self.show_sub())
+            btn_add_fav.pack(side="right", padx=10, pady=5)
+            btn_get_sub.pack(side='left', padx=10, pady=5)
+        elif self.get_state() == State.SHOW_FAVORITES:
+            text_date = "Date d'ajout dans les favoris le : " + str(product['added_date'])
+            label_date = tk.Label(self.frame_description, text=text_date, relief='groove', width=100, height=2, font=(None, 9))
+            label_date.pack(padx=20, pady=5)
+        
+        
     
     def display_product_info(self):
         product = self.selected_product
@@ -147,7 +188,7 @@ class UI_Manager(State_Machine):
         label_places = tk.Label(self.frame_description, text=text_places, relief='groove', width=100, height=2, font=(None, 9))
         label_stores = tk.Label(self.frame_description, text=text_stores, relief='groove', width=100, height=2, font=(None, 9))
         label_barcode = tk.Label(self.frame_description, text=text_barcode, relief='groove', width=100, height=2, font=(None, 9))
-        label_desciption = tk.Label(self.frame_description, text=text_description, relief='groove', width=100, height=2, font=(None, 9))
+        label_description = tk.Label(self.frame_description, text=text_description, relief='groove', width=100, height=2, font=(None, 9))
         btn_add_fav = self.create_button(self.frame_description, 'Add to Fav.', lambda:self.add_to_fav(self.selected_product))
         btn_get_sub = self.create_button(self.frame_description, 'Get Sub.', lambda:self.show_sub())
         # Placements
@@ -157,7 +198,7 @@ class UI_Manager(State_Machine):
         label_places.pack(padx=20, pady=10)
         label_stores.pack(padx=20, pady=10)
         label_barcode.pack(padx=20, pady=10)
-        label_desciption.pack(padx=20, pady=10)
+        label_description.pack(padx=20, pady=10)
         btn_add_fav.pack(side="right", padx=10, pady=5)
         btn_get_sub.pack(side='left', padx=10, pady=5)
     
