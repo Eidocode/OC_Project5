@@ -7,23 +7,36 @@ init(autoreset=True)
 
 controler = Controler()
 
-def menu1():
+def main_menu():
     print("--")
     print("1 : Afficher l'état de la base")
-    print("2 : Consulter la liste des catégories")
-    print("3 : Sélectionner une catégorie")
-    print("4 : Ajouter de nouvelles catégories")
-    print("5 : Ajouter de nouveaux produits dans toutes les catégories existantes")
+    print("2 : Sélectionner une catégorie")
+    print("3 : Consulter les favoris")
+    print("4 : Ajouter 5 catégories dans la base")
+    print("5 : Ajouter 5 produits dans toutes les catégories existantes")
     print("--")
     print("0 : EXIT")
     print("--")
 
-def menu2():
+def catg_menu():
     print("--")
-    print("1 : Afficher tous les produits")
-    print("2 : Ajouter des produits")
-    print("3 : Consulter un produit")
-    print("4 : Ajouter un favori")
+    print("1 : Sélectionner un produit")
+    print("2 : Ajouter 5 produits dans la catégorie")
+    print("--")
+    print("0 : Return")
+    print("--")
+
+def prod_menu():
+    print("--")
+    print("1 : Ajouter ce produit comme favori")
+    print("2 : Consulter un produit substitut")
+    print("--")
+    print("0 : Return")
+    print("--")
+
+def fav_menu():
+    print("--")
+    print("1 : Sélectionner un favori")
     print("--")
     print("0 : Return")
     print("--")
@@ -62,16 +75,18 @@ def show_category_information(category):
     return True
 
 
-menu1_is_active = True
-menu2_is_active = False
+main_menu_is_active = True
+catg_menu_is_active = False
+prod_menu_is_active = False
+fav_menu_is_active = False
 
-while menu1_is_active :
-    menu1()
+while main_menu_is_active :
+    main_menu()
     user_input = input("Quel action souhaitez vous effectuer : ")
 
     if user_input == '0':
         print("Exiting....")
-        menu1_is_active = False
+        main_menu_is_active = False
     elif user_input == '1':
         db_status = controler.get_database_status()
         print("*****")
@@ -81,36 +96,85 @@ while menu1_is_active :
         print("*****")
         controler.get_all_categories_info()
         print("*****")
-    elif user_input == '3':
+        print("--")
         id_cat = input("Veuillez saisir l'ID de la catégorie : ")
         selected_category = controler.get_category_info(id_cat)
         if show_category_information(selected_category):
-            menu2_is_active = True
+            catg_menu_is_active = True
 
-        while (menu2_is_active):
-            menu2()
-            user_new_input = input("Quel action souhaitez vous effectuer sur la catégorie : ")
+        while (catg_menu_is_active):
+            catg_menu()
+            user_catg_input = input("Quel action souhaitez vous effectuer : ")
 
-            if user_new_input == '0':
-                menu2_is_active = False
-            elif user_new_input == '1':
-                controler.get_all_products_info(id_cat)
-            elif user_new_input == '2':
-                input_prod = input("Combien de produits souhaitez-vous ajouter dans cette catégorie : ")
-                controler.set_products_in_category(input_prod, id_cat)
-            elif user_new_input == '3':
+            if user_catg_input == '0':
+                catg_menu_is_active = False
+            elif user_catg_input == '1':
+                lst_prod = None
+                lst_prod = controler.get_all_products_info(id_cat)
                 input_prod = input("Quel produit souhaitez-vous consulter : ")
+                prod_menu_is_active = True
                 this_product = controler.get_product_info(input_prod, id_cat)
                 show_product_information(this_product)
+
+                while prod_menu_is_active:
+                    prod_menu()
+                    user_prod_input = input("Quel action souhaitez vous effectuer : ")
+
+                    if user_prod_input == '0':
+                        prod_menu_is_active = False
+                    elif user_prod_input == '1':
+                        controler.set_product_to_fav(this_product)
+                    elif user_prod_input == '2':
+                        this_sub = controler.get_sub_product(this_product, lst_prod)
+                        print("##### SUBSTITUTE #####")
+                        show_product_information(this_sub)
+
+                        question = True
+                        while question:
+                            user_sub_input = input("Souhaitez-vous ajouter le substitut aux favoris (y/N) : ")
+                            if str(user_sub_input.lower()) == 'y':
+                                controler.set_product_to_fav(this_sub)
+                                question = False
+                            elif user_sub_input.lower() == 'n' or user_sub_input == '':
+                                question = False
+                            else:
+                                print("Ce choix n'existe pas... Veuillez recommencer...")
+                    else:
+                        print("Ce choix n'existe pas... Veuillez recommencer...")
+                
+            elif user_catg_input == '2':
+                controler.set_products_in_category(5, id_cat)
             else:
                 print("Ce choix n'existe pas... Veuillez recommencer...")
         
+    elif user_input == '3':
+        fav_menu_is_active = True
+
+        while fav_menu_is_active:
+            fav_menu()
+            user_fav_input = input("Quel action souhaitez vous effectuer : ")
+
+            if user_fav_input == '0':
+                fav_menu_is_active = False
+            elif user_fav_input == '1':
+                all_fav = controler.get_all_favorites_info()
+                list_id = []
+                for fav in all_fav:
+                    list_id.append(fav['prod_id'])
+                input_fav = input("Quel favori souhaitez-vous consulter : ")
+
+                if int(input_fav) in list_id:
+                    this_fav = controler.get_product_info(input_fav)
+                    show_product_information(this_fav)
+                else :
+                    print("Ce produit n'existe pas ou n'est pas dans les favoris... ")
+            else:
+                print("Ce choix n'existe pas... Veuillez recommencer...")
+
     elif user_input == '4':
-        nb_cat = input("Combien de catégories souhaitez-vous ajouter : ")
-        controler.set_categories(nb_cat)
+        controler.set_categories(5)
     elif user_input == '5':
-        nb_prod = input("Combien de produits par catégorie souhaitez-vous ajouter : ")
-        controler.set_products(nb_prod)
+        controler.set_products(5)
     else:
         print("Ce choix n'existe pas... Veuillez recommencer...")
         

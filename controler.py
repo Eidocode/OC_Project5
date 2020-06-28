@@ -102,7 +102,7 @@ class Controler:
             print(str(prod_id) + " : " + prod_name)
         
         print("--")
-        print(str(len(products)) + " produits présents dans cette catégories")
+        print(str(len(products)) + " produits présents dans cette catégorie")
         return products
     
     def get_all_favorites_info(self):
@@ -125,13 +125,13 @@ class Controler:
             fav['barcode'] = f[8]
             fav['added_date'] = f[9]
             list_to_return.append(fav)
-            print(str(fav['fav_id']) + " : " + fav['name'])
+            print(str(fav['prod_id']) + " : " + fav['name'])
         
         print("--")
         print(str(len(favorites)) + " produits présents dans la liste des favoris")
         return list_to_return
 
-    def get_product_info(self, product_id, category_id):
+    def get_product_info(self, product_id, category_id=None):
         product = Product()
         this_product = {}
         product_info = product.get_one_from_db(product_id)
@@ -151,8 +151,10 @@ class Controler:
         else:
             return None
         
-        if int(this_product['category_id']) != int(category_id):
-            return None
+        if category_id != None:
+            if int(this_product['category_id']) != int(category_id):
+                return None
+
         return this_product
     
     def get_sub_product(self, product, list_prod):
