@@ -73,7 +73,7 @@ class Controler:
             print(str(cat_id) + " : " + cat_name)
         
         return categories_get
-    
+
     def get_category_info(self, id_category):
         category = Category()
         this_category = {}
@@ -137,8 +137,6 @@ class Controler:
         product_info = product.get_one_from_db(product_id)
         product._destroy()
 
-        print("HEYYY" + str(len(product_info)))
-        
         if len(product_info) != 0:
             for p in product_info:
                 this_product['id'] = p[0]
@@ -184,6 +182,5 @@ class Controler:
         this_product['barcode'] = prod[8]
 
         return this_product
-
 
 deinit()

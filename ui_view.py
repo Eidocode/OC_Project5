@@ -14,6 +14,8 @@ class UI_Manager(State_Machine):
     def __init__(self):
         super().__init__()  # inherits from class State_Machine
         self.window = tk.Tk()  # Main Window
+        self.popup = None  # Substitute Popup Window
+        
         self.controler = Controler()  # Controller instance
 
         self.list_box = []  # List box uses for Categories and products
@@ -26,8 +28,6 @@ class UI_Manager(State_Machine):
         self.frame_lstbox = None
         self.frame_description = None  # Right bottom frame contains description
 
-        self.current_state = None
-
         self.selected_category = None  # The selected category in app
         self.selected_product = None  # The selected product in app
         self.selected_favorite = None
@@ -39,6 +39,17 @@ class UI_Manager(State_Machine):
         window.title('Pur Beurre Application')
         window.geometry('1024x768')
         window.resizable(width=0, height=0)
+        
+        menubar = tk.Menu(window)
+        window.config(menu=menubar)
+
+        menu_edit = tk.Menu(menubar, tearoff=0)
+        menubar.add_cascade(label="Edit", menu=menu_edit)
+
+        menu_edit.add_command(label="Add Products", command=lambda:self.controler.set_products(5))
+        menu_edit.add_separator()
+        menu_edit.add_command(label="Exit", command=quit)
+
         self.display_state()
         self.draw_frame_menu(window)
         self.draw_content_frame(window)
@@ -74,10 +85,8 @@ class UI_Manager(State_Machine):
         frame.pack(side='left', fill='y')
     
     def draw_content_frame(self, window):
-        frame_lstbox = tk.Frame(window, relief=tk.RAISED, bd=2)
-        self.frame_lstbox = frame_lstbox
-        frame_description = tk.Frame(window, relief=tk.RAISED, bd=2)
-        self.frame_description = frame_description
+        self.frame_lstbox = tk.Frame(window, relief=tk.RAISED, bd=2)
+        self.frame_description = tk.Frame(window, relief=tk.RAISED, bd=2)
         self.update_lstbox_widgets(self.window, self.frame_lstbox, self.frame_description)
 
     def update_lstbox_widgets(self, window, frame_up, frame_bot):
@@ -92,7 +101,6 @@ class UI_Manager(State_Machine):
         frame_up.pack(padx=5, pady=5, fill='x')
         self.list_box.pack(padx=10, pady=5)
         btn_select.pack(padx=10, pady=5, side='right')
-        print("HEEYYY " + str(self.get_state()))
         if self.get_state() == State.SHOW_CATEGORIES:
             btn_add_cats.pack(padx=10, pady=5, side='left')
         elif self.get_state() == State.SHOW_PRODUCTS:
@@ -102,15 +110,12 @@ class UI_Manager(State_Machine):
         self.clear_frame(self.frame_description)
         if self.get_state() == State.SHOW_CATEGORIES:
             category = self.selected_category
-            print("DRAW CONTENT CAT")
             self.display_category_info()
         elif self.get_state() == State.SHOW_PRODUCTS:
             product = self.selected_product
-            print("DRAW CONTENT PROD")
             self.display_products_info()
         elif self.get_state() == State.SHOW_FAVORITES:
             favorite = self.selected_favorite
-            print("DRAW CONTENT FAV")
             self.display_products_info()
         
     def display_category_info(self):
@@ -132,49 +137,17 @@ class UI_Manager(State_Machine):
         label_json_id.pack(padx=20, pady=10)
         label_url.pack(padx=20, pady=10)
 
-    def display_products_info(self):
+    def display_products_info(self, substitute=False):
         product = None
+        frame = self.frame_description
         if self.get_state() == State.SHOW_PRODUCTS:
-            product = self.selected_product
-        elif self.get_state() == State.SHOW_PRODUCTS:
-            product = self.selected_favorite
-
-        text_name = str(product['name'])
-        text_score = 'Nutriscore : ' + str(product['nutriscore']).upper()
-        text_places = 'Ville(s) : ' + str(product['places'])
-        text_stores = 'Magasin(s) : ' + str(product['stores'])
-        text_barcode = 'Code barre : ' + str(product['barcode'])
-        text_description = 'Description : ' + str(product['description'])
-        # Init elements
-        label_name = tk.Label(self.frame_description, text=text_name, relief='raised', width=100, height=2, font=(None, 18, 'bold'))
-        label_score = tk.Label(self.frame_description, text=text_score, relief='groove', width=100, height=2, font=(None, 9))
-        label_places = tk.Label(self.frame_description, text=text_places, relief='groove', width=100, height=2, font=(None, 9))
-        label_stores = tk.Label(self.frame_description, text=text_stores, relief='groove', width=100, height=2, font=(None, 9))
-        label_barcode = tk.Label(self.frame_description, text=text_barcode, relief='groove', width=100, height=2, font=(None, 9))
-        label_description = tk.Label(self.frame_description, text=text_description, relief='groove', width=100, height=2, font=(None, 9))
-        # Placements
-        self.frame_description.pack(padx=5, pady=5, expand=1, fill='both')
-        label_name.pack(padx=20, pady=20)
-        label_score.pack(padx=20, pady=10)
-        label_places.pack(padx=20, pady=10)
-        label_stores.pack(padx=20, pady=10)
-        label_barcode.pack(padx=20, pady=10)
-        label_description.pack(padx=20, pady=10)
-
-        if self.get_state() == State.SHOW_PRODUCTS:
-            btn_add_fav = self.create_button(self.frame_description, 'Add to Fav.', lambda:self.add_to_fav(self.selected_product))
-            btn_get_sub = self.create_button(self.frame_description, 'Get Sub.', lambda:self.show_sub())
-            btn_add_fav.pack(side="right", padx=10, pady=5)
-            btn_get_sub.pack(side='left', padx=10, pady=5)
+            if substitute == True :
+                product = self.selected_substitute
+                frame = self.popup
+            else :
+                product = self.selected_product
         elif self.get_state() == State.SHOW_FAVORITES:
-            text_date = "Date d'ajout dans les favoris le : " + str(product['added_date'])
-            label_date = tk.Label(self.frame_description, text=text_date, relief='groove', width=100, height=2, font=(None, 9))
-            label_date.pack(padx=20, pady=5)
-        
-        
-    
-    def display_product_info(self):
-        product = self.selected_product
+            product = self.selected_favorite
 
         text_name = str(product['name']) + ' de la marque ' + str(product['brand'])
         text_score = 'Nutriscore : ' + str(product['nutriscore']).upper()
@@ -183,55 +156,39 @@ class UI_Manager(State_Machine):
         text_barcode = 'Code barre : ' + str(product['barcode'])
         text_description = 'Description : ' + str(product['description'])
         # Init elements
-        label_name = tk.Label(self.frame_description, text=text_name, relief='raised', width=100, height=2, font=(None, 18, 'bold'))
-        label_score = tk.Label(self.frame_description, text=text_score, relief='groove', width=100, height=2, font=(None, 9))
-        label_places = tk.Label(self.frame_description, text=text_places, relief='groove', width=100, height=2, font=(None, 9))
-        label_stores = tk.Label(self.frame_description, text=text_stores, relief='groove', width=100, height=2, font=(None, 9))
-        label_barcode = tk.Label(self.frame_description, text=text_barcode, relief='groove', width=100, height=2, font=(None, 9))
-        label_description = tk.Label(self.frame_description, text=text_description, relief='groove', width=100, height=2, font=(None, 9))
-        btn_add_fav = self.create_button(self.frame_description, 'Add to Fav.', lambda:self.add_to_fav(self.selected_product))
-        btn_get_sub = self.create_button(self.frame_description, 'Get Sub.', lambda:self.show_sub())
+        label_name = tk.Label(frame, text=text_name, relief='raised', width=100, height=2, font=(None, 18, 'bold'))
+        label_score = tk.Label(frame, text=text_score, relief='groove', width=100, height=2, font=(None, 9))
+        label_places = tk.Label(frame, text=text_places, relief='groove', width=100, height=2, font=(None, 9))
+        label_stores = tk.Label(frame, text=text_stores, relief='groove', width=100, height=2, font=(None, 9))
+        label_barcode = tk.Label(frame, text=text_barcode, relief='groove', width=100, height=2, font=(None, 9))
+        label_description = tk.Label(frame, text=text_description, relief='groove', width=100, height=2, font=(None, 9))
         # Placements
-        self.frame_description.pack(padx=5, pady=5, expand=1, fill='both')
+        if substitute == False:
+            frame.pack(padx=5, pady=5, expand=1, fill='both')
         label_name.pack(padx=20, pady=20)
         label_score.pack(padx=20, pady=10)
         label_places.pack(padx=20, pady=10)
         label_stores.pack(padx=20, pady=10)
         label_barcode.pack(padx=20, pady=10)
         label_description.pack(padx=20, pady=10)
-        btn_add_fav.pack(side="right", padx=10, pady=5)
-        btn_get_sub.pack(side='left', padx=10, pady=5)
-    
-    def display_favorite_info(self):
-        favorite = self.selected_favorite
 
-        text_name = str(favorite['name']) + ' de la marque ' + str(favorite['brand'])
-        text_score = 'Nutriscore : ' + str(favorite['nutriscore']).upper()
-        text_places = 'Ville(s) : ' + str(favorite['places'])
-        text_stores = 'Magasin(s) : ' + str(favorite['stores'])
-        text_barcode = 'Code barre : ' + str(favorite['barcode'])
-        text_description = 'Description : ' + str(favorite['description'])
-        text_date = "Date d'ajout dans les favoris le : " + str(favorite['added_date'])
-        # Init elements
-        label_name = tk.Label(self.frame_description, text=text_name, relief='raised', width=100, height=2, font=(None, 18, 'bold'))
-        label_score = tk.Label(self.frame_description, text=text_score, relief='groove', width=100, height=2, font=(None, 9))
-        label_places = tk.Label(self.frame_description, text=text_places, relief='groove', width=100, height=2, font=(None, 9))
-        label_stores = tk.Label(self.frame_description, text=text_stores, relief='groove', width=100, height=2, font=(None, 9))
-        label_barcode = tk.Label(self.frame_description, text=text_barcode, relief='groove', width=100, height=2, font=(None, 9))
-        label_desciption = tk.Label(self.frame_description, text=text_description, relief='groove', width=100, height=2, font=(None, 9))
-        label_date = tk.Label(self.frame_description, text=text_date, relief='groove', width=100, height=2, font=(None, 9))
-        # Placements
-        self.frame_description.pack(padx=5, pady=5, expand=1, fill='both')
-        label_name.pack(padx=20, pady=20)
-        label_score.pack(padx=20, pady=5)
-        label_places.pack(padx=20, pady=5)
-        label_stores.pack(padx=20, pady=5)
-        label_barcode.pack(padx=20, pady=5)
-        label_desciption.pack(padx=20, pady=5)
-        label_date.pack(padx=20, pady=5)
-
+        if self.get_state() == State.SHOW_PRODUCTS:
+            if substitute == True:
+                btn_add_fav = self.create_button(frame, 'Add to Fav.', lambda:self.add_to_fav(self.selected_substitute))
+                btn_close = self.create_button(frame, 'Close', frame.destroy)
+                btn_close.pack(side="bottom", padx=10, pady=5)
+                btn_add_fav.pack(side="bottom", padx=10, pady=5)
+            else :
+                btn_add_fav = self.create_button(frame, 'Add to Fav.', lambda:self.add_to_fav(self.selected_product))
+                btn_get_sub = self.create_button(frame, 'Get Sub.', lambda:self.show_sub())
+                btn_add_fav.pack(side="right", padx=10, pady=5)
+                btn_get_sub.pack(side='left', padx=10, pady=5)
+        elif self.get_state() == State.SHOW_FAVORITES:
+            text_date = "Date d'ajout dans les favoris le : " + str(product['added_date'])
+            label_date = tk.Label(frame, text=text_date, relief='groove', width=100, height=2, font=(None, 9))
+            label_date.pack(padx=20, pady=5)
+        
     def show_elements(self, new_state):
-        print("CLIQUE CATEGORY")
         self.clear_frame(self.frame_description)
         self.list_box.delete(0, tk.END)
         if new_state == 'Categories':
@@ -252,6 +209,7 @@ class UI_Manager(State_Machine):
             self.set_state(State.SHOW_FAVORITES)
             self.lst_prod_in_fav = []
             list_favorites = self.controler.get_all_favorites_info()
+            self.update_lstbox_widgets(self.window, self.frame_lstbox, self.frame_description)
             for product in list_favorites:
                 self.lst_prod_in_fav.append(product)
                 self.list_box.insert(tk.END, product['name'])
@@ -278,69 +236,38 @@ class UI_Manager(State_Machine):
 
     def display_state(self):
         state = self.get_state()
-        if state != self.current_state:
-            if state == State.IDLE:
-                print('### IDLE STATE ###')
-            elif state == State.SHOW_CATEGORIES:
-                print('### CATEGORIES STATE ###')
-            elif state == State.SHOW_PRODUCTS:
-                print('### PRODUCTS STATE ###')
-            elif state == State.SHOW_FAVORITES:
-                print('### FAVORITES STATE ###')
-            self.current_state = state
+        if state == State.IDLE:
+            print('### IDLE STATE ###')
+        elif state == State.SHOW_CATEGORIES:
+            print('### CATEGORIES STATE ###')
+        elif state == State.SHOW_PRODUCTS:
+            print('### PRODUCTS STATE ###')
+        elif state == State.SHOW_FAVORITES:
+            print('### FAVORITES STATE ###')
     
     def add_5_items(self):
         if self.get_state() == State.SHOW_CATEGORIES:
-            self.controler.set_categories(5)
+            self.controler.set_categories(5) #A VOIR
             self.show_elements('Categories')
         elif self.get_state() == State.SHOW_PRODUCTS:
             self.controler.set_products_in_category(5, self.selected_category['id'])
             self.show_elements('Products')
     
     def add_to_fav(self, product):
-        print(product)
         self.controler.set_product_to_fav(product)
     
     def show_sub(self):
-        popup = tk.Tk()
-        popup.wm_title("Product Substitute")
-        popup.geometry('640x480')
-        popup.resizable(width=0, height=0)
+        self.popup = tk.Tk()
+        self.popup.wm_title("Product Substitute")
+        self.popup.geometry('640x480')
+        self.popup.resizable(width=0, height=0)
 
         product = self.controler.get_sub_product(self.selected_product, self.lst_prod_in_cat)
         self.selected_substitute = product
         
-        label = tk.Label(popup, text=self.display_sub_info(product, popup))
+        label = tk.Label(self.popup, text=self.display_products_info(True))
         label.pack(side="top", fill="x", pady=10)
-        popup.mainloop()
-
-    def display_sub_info(self, product, window):
-        text_name = str(product['name']) + ' de la marque ' + str(product['brand'])
-        text_score = 'Nutriscore : ' + str(product['nutriscore']).upper()
-        text_places = 'Ville(s) : ' + str(product['places'])
-        text_stores = 'Magasin(s) : ' + str(product['stores'])
-        text_barcode = 'Code barre : ' + str(product['barcode'])
-        text_description = 'Description : ' + str(product['description'])
-        # Init elements
-        label_name = tk.Label(window, text=text_name, relief='raised', width=100, height=2, font=(None, 18, 'bold'))
-        label_score = tk.Label(window, text=text_score, relief='groove', width=100, height=2, font=(None, 9))
-        label_places = tk.Label(window, text=text_places, relief='groove', width=100, height=2, font=(None, 9))
-        label_stores = tk.Label(window, text=text_stores, relief='groove', width=100, height=2, font=(None, 9))
-        label_barcode = tk.Label(window, text=text_barcode, relief='groove', width=100, height=2, font=(None, 9))
-        label_desciption = tk.Label(window, text=text_description, relief='groove', width=100, height=2, font=(None, 9))
-        btn_add_fav = self.create_button(window, 'Add to Fav.', lambda:self.add_to_fav(self.selected_substitute))
-        btn_close = self.create_button(window, 'Close', window.destroy)
-        # Placements
-        label_name.pack(padx=20, pady=20)
-        label_score.pack(padx=20, pady=10)
-        label_places.pack(padx=20, pady=10)
-        label_stores.pack(padx=20, pady=10)
-        label_barcode.pack(padx=20, pady=10)
-        label_desciption.pack(padx=20, pady=10)
-        btn_close.pack(side="bottom", padx=10, pady=5)
-        btn_add_fav.pack(side="bottom", padx=10, pady=5)
-        
-
+        self.popup.mainloop()
 
 
 new_app = UI_Manager()
