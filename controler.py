@@ -8,11 +8,53 @@ from model.product import Product
 init(autoreset=True)
 
 class Controler:
+    """ 
+    Class used to link the model (category, product) to the view (ui_view, terminal_view)
+    
+    ...
+
+    Methods
+    -------
+    get_database_status
+        Returns the number of categories and products already in database
+            
+    set_categories(nb_categories)
+        Gets some categories (defined by nb_categories) and sets them to the database
+    
+    set_products(nb_products)
+        Gets some products (defined by nb_products) and sets them to the database
+
+    set_product_to_fav(product_to_set)
+        Adds a product (defined by product_to_set) to the Favorite table
+    
+    set_products_in_category(nb_products, id_category)
+        Adds some products (nb_products) linked to a category to the database
+    
+    get_all_categories_info
+        Returns informations about all categories already in database
+
+    get_category_info(id_category)
+        Returns informations about a category defined by id_category
+    
+    get_all_products_info(category_id)
+        Returns informations about all products contained in a category and defined by category_id
+    
+    get_all_favorites_info
+        Returns informations about all products contained in Favorite table
+    
+    get_product_info(product_id, category_id=None)
+        Returns informations about a product defined by product_id and, optionally, in a category defined by category_id
+    
+    get_sub_product(product, list_prod)
+        Returns a substitute of a product defined by 'product'
+    """
     
     def __init__(self):
         pass
 
     def get_database_status(self):
+        """Returns the number of categories and products already in database"""
+
         self.category = Category()
         self.product = Product()
 
@@ -26,6 +68,14 @@ class Controler:
         return status
     
     def set_categories(self, nb_categories):
+        """Gets some categories (defined by nb_categories) and sets them to the database
+        
+        Parameters
+        ----------
+        nb_categories : int
+            number of categories to set in database
+        """
+
         category = Category()
 
         categories_to_set = category._get_from_api(nb_categories)
@@ -35,6 +85,14 @@ class Controler:
         print("Controler : set_categories done...")
     
     def set_products(self, nb_products):
+        """Gets some products (defined by nb_products) and sets them to the database
+        
+        Parameters
+        ----------
+        nb_products : int
+            number of products to set in database
+        """
+        
         product = Product()
 
         products_to_set = product._get_from_api(nb_products)
@@ -44,12 +102,31 @@ class Controler:
         print("Controler : set_products done...")
     
     def set_product_to_fav(self, product_to_set):
+        """Adds a product (defined by product_to_set) to the Favorite table
+        
+        Parameters
+        ----------
+        product_to_set : dict
+            product to set in table
+        """
+        
         product = Product()
         product.set_to_fav(product_to_set)
         product._destroy()
         print(product_to_set['name'] + ' a été ajouté aux favoris.')
 
     def set_products_in_category(self, nb_products, id_category):
+        """Adds some products (nb_products) linked to a category to the database
+        
+        Parameters
+        ----------
+        nb_products : int
+            number of products to set in database
+        
+        id_category : int
+            ID of the linked category
+        """
+        
         product = Product()
         category = Category()
 
@@ -63,6 +140,8 @@ class Controler:
         print("Controler : set_products done...")
     
     def get_all_categories_info(self):
+        """Returns informations about all categories already in database"""
+        
         category = Category()
         categories_get = category.get_all_from_db()
         category._destroy()
@@ -75,6 +154,14 @@ class Controler:
         return categories_get
 
     def get_category_info(self, id_category):
+        """Returns informations about a category defined by id_category
+        
+        Parameters
+        ----------
+        id_category : int
+            ID of the targeted category
+        """
+        
         category = Category()
         this_category = {}
         category_info = category.get_one_from_db(id_category)
@@ -92,6 +179,14 @@ class Controler:
         return this_category
 
     def get_all_products_info(self, category_id):
+        """Returns informations about all products contained in a category and defined by category_id
+        
+        Parameters
+        ----------
+        category_id : int
+            ID of the targeted category
+        """
+        
         product = Product()
         products = product.get_all_from_a_category(category_id)
         product._destroy()
@@ -106,6 +201,8 @@ class Controler:
         return products
     
     def get_all_favorites_info(self):
+        """Returns informations about all products contained in Favorite table"""
+
         product = Product()
         favorites = product.get_fav_from_db()
         product._destroy()
@@ -132,6 +229,17 @@ class Controler:
         return list_to_return
 
     def get_product_info(self, product_id, category_id=None):
+        """Returns informations about a product defined by product_id and, optionally, in a category defined by category_id
+        
+        Parameters
+        ----------
+        product_id : int
+            ID of the targeted product
+
+        category_id : int (Optional)
+            ID of the targeted category
+        """
+
         product = Product()
         this_product = {}
         product_info = product.get_one_from_db(product_id)
@@ -158,6 +266,17 @@ class Controler:
         return this_product
     
     def get_sub_product(self, product, list_prod):
+        """Returns a substitute of a product defined by 'product'
+        
+        Parameters
+        ----------
+        product : dict
+            The targeted product
+
+        list_prod : list
+            list of all products in the current category
+        """
+
         nutri_prod = product['nutriscore']
         list_sub = []
         this_product = {}
