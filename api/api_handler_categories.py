@@ -1,5 +1,4 @@
 import requests
-import json
 
 from random import randrange
 
@@ -16,28 +15,28 @@ class ApiHandlerCategories:
     ----------
     nb_cat : int
         Number of categories to handle
-    
+
     categories : list
         list of categories retrieved randomly
-    
+
     Methods
     -------
     _get_categories
-        Returns all categories retrieved according to the filters 
-        defined in the method
-    
+        Returns all categories retrieved according to the filters defined
+        in the method
+
     get_random_categories
-        Returns "nb_cat" random categories 
+        Returns "nb_cat" random categories
     """
-    
+
     def __init__(self, nb_cat):
         self.nb_cat = int(nb_cat)
         self.categories = self.get_random_categories
-    
+
     @property
     def _get_categories(self):
-        """Returns all categories retrieved according to the filters 
-        defined in the method 
+        """Returns all categories retrieved according to the filters
+        defined in the method
         """
         list_cat = []
         list_cat_filtered = []
@@ -47,15 +46,16 @@ class ApiHandlerCategories:
         list_cat = json_cat.get('tags')
 
         for category in list_cat:
-            if (category['products'] >= const.MIN_PRODUCTS_TO_FILTER and category["id"].startswith('fr')) :
+            if (category['products'] >= const.MIN_PRODUCTS_TO_FILTER and
+                    category["id"].startswith('fr')):
                 url_category = requests.get(category['url'] + '.json')
                 json_category = url_category.json()
                 nb_products = int(json_category.get('count'))
-                if nb_products != None:
+                if nb_products is not None:
                     if nb_products >= const.MIN_PRODUCTS_TO_FILTER:
                         list_cat_filtered.append(category)
 
-        print("Nb. categories >= 100 products : " + str(len(list_cat_filtered)))
+        print("Categories >= 100 products : " + str(len(list_cat_filtered)))
         return list_cat_filtered
 
     @property

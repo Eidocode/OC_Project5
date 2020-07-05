@@ -54,19 +54,19 @@ def show_product_information(product):
     # Product sheet which is displayed when the user wants to consult a product
     if product is not None:
         print("*****************************")
-        str1 = """Sélection du produit {} de la
-                    marque {}""".format(product['name'], str(product['brand']))
+        str1 = "Sélection du produit {} de la marque {}".format(
+                                    product['name'], str(product['brand']))
         print(str1)
         print("-----")
         print("-----")
         print("Nutriscore : " + str(product['nutriscore']).upper())
         print("-----")
-        str2 = """Dans quelle(s) ville(s) peut-on le trouver
-                     : {}""".format(str(product['places']))
+        str2 = """Dans quelle(s) ville(s) peut-on le trouver : {}""".format(
+                                    str(product['places']))
         print(str2)
         print("-----")
-        str3 = """Dans quel(s) magasin(s) peut-on l'acheter
-                     : {}""".format(str(product['stores']))
+        str3 = """Dans quel(s) magasin(s) peut-on l'acheter : {}""".format(
+                                    str(product['stores']))
         print(str3)
         print("-----")
         print("Code barre : " + str(product['barcode']))
@@ -75,8 +75,7 @@ def show_product_information(product):
         print("*****************************")
     else:
         print("*****************************")
-        print("""Ce produit n'existe pas ou appartient à une autre catégorie...
-                 Veuillez saisir un ID existant dans cette catégorie...""")
+        print("Ce produit n'existe pas ou appartient à une autre catégorie..")
         print("*****************************")
 
 
@@ -152,8 +151,8 @@ while main_menu_is_active:
 
                         question = True
                         while question:
-                            user_sub_input = input("""Ajouter le substitut aux
-                                     favoris (y/N) : """)
+                            str_input = "Ajouter aux favoris (y/N) : "
+                            user_sub_input = input(str_input)
                             if str(user_sub_input.lower()) == 'y':
                                 controler.set_product_to_fav(this_sub)
                                 question = False

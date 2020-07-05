@@ -32,4 +32,3 @@ class State_Machine:
 
     def get_state(self):
         return self.__state
-        

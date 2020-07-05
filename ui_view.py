@@ -49,10 +49,14 @@ class UI_Manager(State_Machine):
         self.init_application(self.window)
 
     def init_application(self, window):
-        window.title('Pur Beurre Application')
-        window.geometry('1024x768')
-        window.resizable(width=0, height=0)
+        """Init. application"""
 
+        # Main window configuration
+        window.title('Pur Beurre Application')  # Title
+        window.geometry('1024x768')  # Resolution
+        window.resizable(width=0, height=0)  # Not resizable
+
+        # Main Window MenuBar
         menubar = tk.Menu(window)
         window.config(menu=menubar)
 
@@ -63,25 +67,50 @@ class UI_Manager(State_Machine):
         menu_edit.add_separator()
         menu_edit.add_command(label="Exit", command=quit)
 
-        self.display_state()
-        self.draw_frame_menu(window)
-        self.draw_content_frame(window)
+        # Class methods
+        self.display_state()  # Show current state
+        self.draw_frame_menu(window)  # Left Frame Menu
+        self.draw_content_frame(window)  # Right Frame Menu
 
     def clear_frame(self, frame):
+        """Clear all widgets in specified frame
+
+        Parameters
+        ----------
+        frame = Tkinter frame
+            Frame where the widgets are located
+        """
         for widget in frame.winfo_children():
             widget.destroy()
 
     def create_button(self, frm, txt, cmd, btn_state=tk.NORMAL):
+        """Create a Tkinter button in a specified frame
+
+        Parameters
+        ----------
+        frm = Tkinter frame
+            Frame where the button will be
+        txt = string
+            Text to display in the button
+        cmd = command
+            Command to execute when clicked
+        btn_state = Tkinter button state
+            Button state, Normal by default
+        """
         return tk.Button(frm, text=txt, command=cmd,
                          height=const.BUTTONS_HEIGHT,
                          width=const.BUTTONS_WIDTH, state=btn_state)
 
     def draw_frame_menu(self, window):
+        """Draw left menu frame"""
+
         # Init elements
         self.frame_menu = tk.Frame(window, relief=tk.RAISED, bd=2)
         self.update_menu_widgets(self.frame_menu)
 
     def update_menu_widgets(self, frame):
+        """Update left menu widgets"""
+
         self.clear_frame(frame)
         if self.btn_prod_is_active:
             btn_state = tk.NORMAL
@@ -103,12 +132,16 @@ class UI_Manager(State_Machine):
         frame.pack(side='left', fill='y')
 
     def draw_content_frame(self, window):
+        """Update left menu widgets"""
+
         self.frame_lstbox = tk.Frame(window, relief=tk.RAISED, bd=2)
         self.frame_description = tk.Frame(window, relief=tk.RAISED, bd=2)
         self.update_lstbox_widgets(self.window, self.frame_lstbox,
                                    self.frame_description)
 
     def update_lstbox_widgets(self, window, frame_up, frame_bot):
+        """Update listbox widgets"""
+
         self.clear_frame(frame_up)
         # Init elements
         self.list_box = tk.Listbox(frame_up, height=15, width=110,
@@ -131,6 +164,8 @@ class UI_Manager(State_Machine):
             btn_add_prods.pack(padx=10, pady=5, side='left')
 
     def draw_description_frame(self):
+        """Draw bottom right frame"""
+
         self.clear_frame(self.frame_description)
         if self.get_state() == State.SHOW_CATEGORIES:
             self.display_category_info()
@@ -140,6 +175,8 @@ class UI_Manager(State_Machine):
             self.display_products_info()
 
     def display_category_info(self):
+        """Display information about categories"""
+
         category = self.selected_category
 
         text_name = str(category['name'])
@@ -167,6 +204,8 @@ class UI_Manager(State_Machine):
         label_url.pack(padx=20, pady=10)
 
     def display_products_info(self, substitute=False):
+        """Display information about products"""
+
         product = None
         frame = self.frame_description
         if self.get_state() == State.SHOW_PRODUCTS:
@@ -178,8 +217,8 @@ class UI_Manager(State_Machine):
         elif self.get_state() == State.SHOW_FAVORITES:
             product = self.selected_favorite
 
-        text_name = """{} de la marque {}""".format(product['name'],
-                                                    product['brand'])
+        text_name = "{} de la marque {}".format(product['name'],
+                                                product['brand'])
         text_score = 'Nutriscore : ' + str(product['nutriscore']).upper()
         text_places = 'Ville(s) : ' + str(product['places'])
         text_stores = 'Magasin(s) : ' + str(product['stores'])
@@ -200,7 +239,7 @@ class UI_Manager(State_Machine):
                                      relief='groove', width=100, height=2,
                                      font=(None, 9))
         # Placements
-        if substitute:
+        if not substitute:
             frame.pack(padx=5, pady=5, expand=1, fill='both')
         label_name.pack(padx=20, pady=20)
         label_score.pack(padx=20, pady=10)
@@ -234,6 +273,16 @@ class UI_Manager(State_Machine):
             label_date.pack(padx=20, pady=5)
 
     def show_elements(self, new_state):
+        """Display elements in listbox defined by the state specified in
+        parameter
+
+        Parameters
+        ----------
+        new_state = String
+            The state to target to show categories, products or favorites
+            elements
+        """
+
         self.clear_frame(self.frame_description)
         self.list_box.delete(0, tk.END)
         if new_state == 'Categories':
@@ -265,6 +314,8 @@ class UI_Manager(State_Machine):
         self.display_state()
 
     def show_selected_item(self, list_box):
+        """Show selected item (category, product, favorite) information"""
+
         select = list_box.curselection()
         indice = int(select[0])
         indice_db = indice + 1
@@ -289,6 +340,8 @@ class UI_Manager(State_Machine):
         self.draw_description_frame()
 
     def display_state(self):
+        """Display current state"""
+
         state = self.get_state()
         if state == State.IDLE:
             print('### IDLE STATE ###')
@@ -300,6 +353,9 @@ class UI_Manager(State_Machine):
             print('### FAVORITES STATE ###')
 
     def add_5_items(self):
+        """Add 5 items (categories or products) to database, depending of the
+        current state"""
+
         if self.get_state() == State.SHOW_CATEGORIES:
             self.controler.set_categories(5)
             self.show_elements('Categories')
@@ -310,10 +366,13 @@ class UI_Manager(State_Machine):
             self.show_elements('Products')
 
     def add_to_fav(self, product):
+        """Add product specified in parameters to favorites"""
         self.controler.set_product_to_fav(product)
 
     def show_sub(self):
-        self.popup = tk.Tk()
+        """Show substitute product"""
+
+        self.popup = tk.Tk()  # Substitute popup window
         self.popup.wm_title("Product Substitute")
         self.popup.geometry('640x480')
         self.popup.resizable(width=0, height=0)
@@ -327,6 +386,7 @@ class UI_Manager(State_Machine):
         self.popup.mainloop()
 
 
+# GUI instance
 new_app = UI_Manager()
 new_app.window.mainloop()
 

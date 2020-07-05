@@ -1,10 +1,11 @@
-from colorama import init, deinit, Fore, Back, Style
+from colorama import init, deinit, Fore
 
 from database.database_manager import DatabaseManager
 from api.api_handler_categories import ApiHandlerCategories
 
 
 init(autoreset=True)
+
 
 class Category:
     """
@@ -16,38 +17,38 @@ class Category:
     ----------
     categories_in_db : list
         List which contains all categories present in database
-    
+
     list_json_id : list
         List which contains values of json_id field in database
-    
+
     Methods
     -------
     _get_from_api(nb_cat)
         Analyze categories returns by ApiHandlerCategories Class.
-    
+
     set_to_db(datas_to_insert)
         Set categories to database
-    
+
     get_all_from_db
         Returns a list of all categories present in database
-    
+
     exist_in_db
         Check if json_id exists in database and returns True or False
-    
+
     get_one_from_db(id_category)
         Returns one category defined by id_category from database
     """
-    
+
     def __init__(self):
         self.categories_in_db = self.get_all_from_db()
-        
+
         self.list_json_id = []
         for cat in self.categories_in_db:
             self.list_json_id.append(cat[2])
 
     def _get_from_api(self, nb_cat):
-        """Analyze categories returns by ApiHandlerCategories Class. For each 
-        category, check if it already exists in list or database. Returns a 
+        """Analyze categories returns by ApiHandlerCategories Class. For each
+        category, check if it already exists in list or database. Returns a
         list without any duplicate category.
 
         Parameters
@@ -64,11 +65,12 @@ class Category:
                 datas = (category['name'], category['id'], category['url'])
                 list_categories.append(datas)
                 print(category['name'] + " added to database...")
-            else :
-                print(Fore.YELLOW + category['name'] + " already in list or database...")
-        
+            else:
+                str1 = category['name'] + " already in list or database..."
+                print(Fore.YELLOW + str1)
+
         return list_categories
-    
+
     def set_to_db(self, datas_to_insert):
         """Set categories to database with DatabaseManager Class
 
@@ -83,17 +85,17 @@ class Category:
         insert_query = """INSERT INTO Categories (name, json_id, url)
                             VALUES
                             (%s, %s, %s)"""
-        
+
         db_manager.set_query(insert_query, datas_to_insert)
         db_manager._destroy()
-    
+
     def get_all_from_db(self):
         """Returns a list of all categories present in database"""
-        
+
         db_manager = DatabaseManager()
         list_categories = []
         query_get_categories = """SELECT * FROM Categories"""
-        
+
         list_categories = db_manager.get_query(query_get_categories)
         db_manager._destroy()
 
@@ -101,7 +103,7 @@ class Category:
 
     def exist_in_db(self, json_id):
         """Check if json_id exists in database and returns True or False
-        If json_id not present in list_json_id, add it to prevent duplicate 
+        If json_id not present in list_json_id, add it to prevent duplicate
         category.
 
         Parameters
@@ -115,7 +117,7 @@ class Category:
             self.list_json_id.append(json_id)
 
         return False
-    
+
     def get_one_from_db(self, id_category):
         """Returns one category defined by id_category from database
 
@@ -126,14 +128,14 @@ class Category:
         """
         db_manager = DatabaseManager()
         category_info = []
-        
-        query_get_category = """SELECT * FROM Categories WHERE id = """ + str(id_category)
-        
+
+        query_get_category = """SELECT * FROM Categories WHERE
+                                     id = """ + str(id_category)
+
         category_info = db_manager.get_query(query_get_category)
         db_manager._destroy()
 
         return category_info
-
 
     def _destroy(self):
         print(Fore.LIGHTYELLOW_EX + "Instance Category has been deleted")
