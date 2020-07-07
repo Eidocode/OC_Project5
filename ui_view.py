@@ -19,6 +19,7 @@ class UI_Manager(State_Machine):
         # Main and popup windows
         self.window = tk.Tk()
         self.popup = None
+        self.about_popup = None
 
         # Controller instance
         self.controler = Controler()
@@ -64,6 +65,9 @@ class UI_Manager(State_Machine):
         menubar.add_cascade(label="Edit", menu=menu_edit)
         menu_edit.add_command(label="Add Products", command=lambda:
                                     self.controler.set_products(5))
+        menu_edit.add_separator()
+        menu_edit.add_command(label="About", command=lambda:
+                                    self.about())
         menu_edit.add_separator()
         menu_edit.add_command(label="Exit", command=quit)
 
@@ -385,9 +389,32 @@ class UI_Manager(State_Machine):
         label.pack(side="top", fill="x", pady=10)
         self.popup.mainloop()
 
+    def about(self):
+        """About popup"""
 
-# GUI instance
-new_app = UI_Manager()
-new_app.window.mainloop()
+        self.about_popup = tk.Tk()  # About popup window
+        self.about_popup.wm_title("About PurBeurre")
+        self.about_popup.geometry('400x220')
+        self.about_popup.resizable(width=0, height=0)
+
+        info = "-----------------------------------------------------------\n"
+        info += "\n"
+        info += "      PurBeurre application coded by David Bouzerar\n"
+        info += "\n"
+        info += "    OpenClassrooms - Developpeur d'application Python\n"
+        info += " Project 5 -  Utilisez les données publiques OpenFoodFacts\n"
+        info += "\n"
+        info += "      Special thanks to my mentor - Rygel Louv -  :)\n"
+        info += "\n"
+        info += "-------------------------------------------------------------"
+
+        btn_about = self.create_button(self.about_popup,
+                                       "Close", self.about_popup.destroy)
+
+        label = tk.Label(self.about_popup, text=info)
+        label.pack(side="top", fill="x", pady=10)
+        btn_about.pack(side="bottom", pady=10)
+        self.about_popup.mainloop()
+
 
 deinit()
