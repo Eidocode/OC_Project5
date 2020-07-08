@@ -22,8 +22,8 @@ DROP TABLE IF EXISTS Favoris;
 CREATE TABLE Categories (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT,
   name TINYTEXT NOT NULL,
-  json_id VARCHAR(45) NULL,
-  url VARCHAR(90) NULL,
+  json_id VARCHAR(90) NULL,
+  url VARCHAR(150) NULL,
   PRIMARY KEY (id)
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8;
 
@@ -52,11 +52,17 @@ CREATE TABLE Products (
 
 CREATE TABLE Favoris (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  added_date DATE NOT NULL,
-  product_id INT UNSIGNED NOT NULL,
+  added_date DATETIME NOT NULL,
+  product_id INT UNSIGNED NOT NULL UNIQUE,
   PRIMARY KEY (id)
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8;
 
+
+-- ------------------
+-- -- ALTER  TABLE --
+-- ------------------
+
+ALTER TABLE Favoris MODIFY added_date DATETIME NOT NULL DEFAULT NOW();
 
 -- ------------------
 -- -- FOREIGN KEYS --

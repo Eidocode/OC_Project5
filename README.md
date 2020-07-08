@@ -6,7 +6,7 @@ L'équipe a remarqué que leurs utilisateurs voulaient bien changer leur aliment
 
 ## Base de données "Pur_beurre"
 
-Pour ce projet, le choix du **SGBDR** s'est porté sur **MySQL**. Dans le cas présent, la base nommée "**pur_beurre**" est stockée sur une machine virtuelle Linux (**Ubuntu Server 18.04**), hébergée elle-même sur un serveur **HP Proliant** (accessible depuis mon réseau local). Bien entendu, il est possible d'utiliser l'application avec une base de donnée stockée localement, il faudra alors le spécifier dans les constantes (**./constants.py**).
+Pour ce projet, le choix du **SGBDR** s'est porté sur **MySQL**. Dans le cas présent, la base nommée "**pur_beurre**" est stockée sur une machine virtuelle Linux (**Ubuntu Server 18.04**), hébergée elle-même sur un serveur **HP Proliant** (accessible localement). Bien entendu, il est possible d'utiliser l'application avec une base de donnée stockée localement, il faudra alors le spécifier dans les constantes (**./constants.py**).
 
 ### Structure :
 
@@ -20,8 +20,8 @@ La base de données est composée de 3 tables :
 |----------------|-----------------------|------|--------|--------|---------------|
 |id              |INT(10), Unsigned      |NO    |PRI     |NULL    |Auto_increment |
 |name            |TINYTEXT               |NO    |        |NULL    |               |
-|json_id         |VARCHAR(45)            |YES   |        |NULL    |               |
-|url             |VARCHAR(90)            |YES   |        |NULL    |               |
+|json_id         |VARCHAR(90)            |YES   |        |NULL    |               |
+|url             |VARCHAR(150)           |YES   |        |NULL    |               |
 
  - **Products** : Contient les produits récupérés contenus dans les différentes catégories de la table précédente.
 
@@ -42,8 +42,8 @@ La base de données est composée de 3 tables :
 |Field           |Type                   |NULL  | KEY    |DEFAULT |EXTRA          |
 |----------------|-----------------------|------|--------|--------|---------------|
 |id              |INT(10), Unsigned      |NO    |PRI     |NULL    |Auto_increment |
-|added_date      |DATE                   |NO    |        |NULL    |               |
-|product_id      |INT(10), Unsigned      |NO    |MUL     |NULL    |               |
+|added_date      |DATETIME               |NO    |        |CUR_TIME|               |
+|product_id      |INT(10), Unsigned      |NO    |UNI     |NULL    |               |
 
 Deux clés étrangères sont créées pour lier nos différentes tables : 
 
@@ -53,7 +53,7 @@ Deux clés étrangères sont créées pour lier nos différentes tables :
 ### Script :
 
 Un script **SQL** comportant la création de la structure est accessible depuis ("**./SQL/pur_beurre_struct.sql**"). Ce script est autonome mais nécessite d'être exécuté depuis un compte possédant les droits en écriture sur "**pur_beurre.***".
-
+m
 Attribuer les droits sur la base pur_beurre depuis la console **MySQL** : 
 
     GRANT ALL PRIVILEGES ON pur_beurre.* TO '[login]'@'localhost' IDENTIFIED BY '[password]' WITH GRANT OPTION;
@@ -67,6 +67,10 @@ Cela implique que la console **MySQL** soit lancée depuis le même chemin que l
 
 
 ## Application
+
+_Les dépendances nécessaires à l'exécution de l'application se trouvent dans le fichier **./requirements.txt**. Elles peuvent être installées automatiquement (de préférence dans un environnement virtuel python) de la façon suivante :_
+
+	pip3 install -r requirements.txt
 
 ### Packages :
 
@@ -84,12 +88,18 @@ L'application est composée de 3 différents packages **Api**, **Model** et **Da
 Le controller **./controller.py** est constitué d'une classe chargée de faire communiquer tous les éléments de l'application. Il s'occupe par exemple de récupérer les éléments de l'Api (par l'intermédiaire du package **Api**), puis de les injecter dans la base de données (par l'intermédiaire des packages **Model** et **Database**). Toute la logique nécessaire au fonctionnement de l'application s'y trouve.
 
 
+### State : 
+
+Cette classe (en plus de la classe **State_machine** située dans le même fichier) est utilisée pour faciliter la gestion des états dans l'application et notamment la transition entre celles-ci. On peut retrouver les états suivants : **IDLE**, **SHOW_CATEGORIES**, **SHOW_PRODUCTS**, **SHOW_FAVORITES**.
+
+
 ### Interfaces : 
 
 L'application contient deux interfaces utilisateurs qui, se reposant sur le controller, proposent les mêmes fonctionnalités. Une première en mode **"terminal"** (**./terminal_view.py**) , et une autre, **"graphique"** (**./ui_view.py**).
 
-- **Terminal** :  En utilisant cette interface, l'utilisateur interagit grâce aux touches de son clavier. Le menu lui indique quelles sont ses possibilités, il saisit alors son choix qui se fait exclusivement via le pavé numérique.
+- **Terminal** :  Depuis cette interface, l'utilisateur interagit grâce aux touches de son clavier. Le menu lui indique quelles sont ses possibilités, il saisit alors son choix qui se fait exclusivement via le pavé numérique.
 
-- **GUI** : L'interface graphique propose donc, par l'intermédiaire d'une classe **Application**,  les mêmes fonctionnalités que la version **terminal**. La différence étant qu'elle est affichée dans une fenêtre à l'image du système d'exploitation. L'utilisateur interagit ici majoritairement avec sa souris grâce à des boutons et des listes à parcourir notamment. La bibliothèque **Tkinter** (intégrée nativement à Python) est utilisée ici pour dessiner et disposer les éléments de l'interface graphique.  
+- **GUI** :  L'interface graphique propose donc, par l'intermédiaire d'une classe **Application**,  les mêmes fonctionnalités que la version **terminal**. La différence étant qu'elle est affichée dans une fenêtre à l'image du système d'exploitation. L'utilisateur interagit ici majoritairement avec sa souris grâce à des boutons et des listes à parcourir notamment. La bibliothèque **Tkinter** (intégrée nativement à Python) est utilisée ici pour dessiner et disposer les éléments de l'interface graphique.
 
+- **Main** :  L'exécution de l'application s'effectue par l'intermédiaire du fichier **./main.py**. Un menu propose ici, à l'utilisateur, de choisir entre la version "**Terminal**" ou "**Graphique**" de l'application. L'action est exécutée selon le choix effectué.
 
