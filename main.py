@@ -1,4 +1,4 @@
-from colorama import init, deinit
+from colorama import init, deinit, Fore
 
 from ui_view import UI_Manager
 from terminal_view import main_program
@@ -28,7 +28,7 @@ while menu_is_active:
         new_app = UI_Manager()
         new_app.window.mainloop()
     elif user_input == '0':
-        print("Exiting....")
+        print(Fore.RED + "Exiting....")
         menu_is_active = False
     else:
         print("Unknown choice... Retry...")

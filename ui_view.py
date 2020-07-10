@@ -4,7 +4,7 @@ from colorama import init, deinit
 
 import utils.constants as const
 
-from controler import Controler
+from controller import Controller
 from state import State_Machine, State
 
 
@@ -22,7 +22,7 @@ class UI_Manager(State_Machine):
         self.about_popup = None
 
         # Controller instance
-        self.controler = Controler()
+        self.controller = Controller()
 
         # List box uses for Categories and products
         self.list_box = []
@@ -64,7 +64,7 @@ class UI_Manager(State_Machine):
         menu_edit = tk.Menu(menubar, tearoff=0)
         menubar.add_cascade(label="Edit", menu=menu_edit)
         menu_edit.add_command(label="Add Products", command=lambda:
-                                    self.controler.set_products(5))
+                                    self.controller.set_products(5))
         menu_edit.add_separator()
         menu_edit.add_command(label="About", command=lambda:
                                     self.about())
@@ -291,7 +291,7 @@ class UI_Manager(State_Machine):
         self.list_box.delete(0, tk.END)
         if new_state == 'Categories':
             self.set_state(State.SHOW_CATEGORIES)
-            list_categories = self.controler.get_all_categories_info()
+            list_categories = self.controller.get_all_categories_info()
             self.update_lstbox_widgets(self.window, self.frame_lstbox,
                                        self.frame_description)
             for category in list_categories:
@@ -299,7 +299,7 @@ class UI_Manager(State_Machine):
         elif new_state == 'Products':
             self.set_state(State.SHOW_PRODUCTS)
             self.lst_prod_in_cat = []
-            list_products = self.controler.get_all_products_info(
+            list_products = self.controller.get_all_products_info(
                                             str(self.selected_category['id']))
             self.update_lstbox_widgets(self.window, self.frame_lstbox,
                                        self.frame_description)
@@ -309,7 +309,7 @@ class UI_Manager(State_Machine):
         elif new_state == 'Favorites':
             self.set_state(State.SHOW_FAVORITES)
             self.lst_prod_in_fav = []
-            list_favorites = self.controler.get_all_favorites_info()
+            list_favorites = self.controller.get_all_favorites_info()
             self.update_lstbox_widgets(self.window, self.frame_lstbox,
                                        self.frame_description)
             for product in list_favorites:
@@ -324,7 +324,7 @@ class UI_Manager(State_Machine):
         indice = int(select[0])
         indice_db = indice + 1
         if self.get_state() == State.SHOW_CATEGORIES:
-            self.selected_category = self.controler.get_category_info(
+            self.selected_category = self.controller.get_category_info(
                                                                 indice_db)
             print("Vous avez selectionné la catégorie " +
                   self.selected_category['name'])
@@ -333,7 +333,7 @@ class UI_Manager(State_Machine):
         elif self.get_state() == State.SHOW_PRODUCTS:
             product = self.lst_prod_in_cat[indice]
             product_id = int(product[0])
-            self.selected_product = self.controler.get_product_info(
+            self.selected_product = self.controller.get_product_info(
                                 product_id, str(self.selected_category['id']))
             print("Vous avez selectionné le produit " +
                   self.selected_product['name'])
@@ -361,17 +361,17 @@ class UI_Manager(State_Machine):
         current state"""
 
         if self.get_state() == State.SHOW_CATEGORIES:
-            self.controler.set_categories(5)
+            self.controller.set_categories(5)
             self.show_elements('Categories')
         elif self.get_state() == State.SHOW_PRODUCTS:
-            self.controler.set_products_in_category(
+            self.controller.set_products_in_category(
                                                 5,
                                                 self.selected_category['id'])
             self.show_elements('Products')
 
     def add_to_fav(self, product):
         """Add product specified in parameters to favorites"""
-        self.controler.set_product_to_fav(product)
+        self.controller.set_product_to_fav(product)
 
     def show_sub(self):
         """Show substitute product"""
@@ -381,7 +381,7 @@ class UI_Manager(State_Machine):
         self.popup.geometry('640x480')
         self.popup.resizable(width=0, height=0)
 
-        product = self.controler.get_sub_product(self.selected_product,
+        product = self.controller.get_sub_product(self.selected_product,
                                                  self.lst_prod_in_cat)
         self.selected_substitute = product
 

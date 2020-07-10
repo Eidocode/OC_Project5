@@ -8,7 +8,7 @@ from model.product import Product
 init(autoreset=True)
 
 
-class Controler:
+class Controller:
     """
     Class used to link the model (category, product) to the view
     (ui_view, terminal_view)
@@ -70,8 +70,8 @@ class Controler:
         self.category._destroy()
         self.product._destroy()
 
-        status = """La base contient : {} catégories |
-                     {} produits.""".format(nb_categories, nb_products)
+        status = """La base contient : {} catégories | {} produits.""".format(
+                                                   nb_categories, nb_products)
         return status
 
     def set_categories(self, nb_categories):

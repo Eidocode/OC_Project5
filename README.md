@@ -10,7 +10,11 @@ Pour ce projet, le choix du **SGBDR** s'est porté sur **MySQL**. Dans le cas pr
 
 ### Structure :
 
+<<<<<<< HEAD
 ![MPD.PNG](https://github.com/Eidocode/OC_Project5/blob/master/ressources/MPD.png)
+=======
+![MPD.PNG](https://github.com/Eidocode/OC_Project5/blob/dev/ressources/MPD.png)
+>>>>>>> dev
 
 La base de données est composée de 3 tables : 
 
