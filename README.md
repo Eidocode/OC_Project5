@@ -10,11 +10,7 @@ Pour ce projet, le choix du **SGBDR** s'est porté sur **MySQL**. Dans le cas pr
 
 ### Structure :
 
-<<<<<<< HEAD
-![MPD.PNG](https://github.com/Eidocode/OC_Project5/blob/master/ressources/MPD.png)
-=======
 ![MPD.PNG](https://github.com/Eidocode/OC_Project5/blob/dev/ressources/MPD.png)
->>>>>>> dev
 
 La base de données est composée de 3 tables : 
 
@@ -103,7 +99,7 @@ L'application contient deux interfaces utilisateurs qui, se reposant sur le cont
 
 - **Terminal** :  Depuis cette interface, l'utilisateur interagit grâce aux touches de son clavier. Le menu lui indique quelles sont ses possibilités, il saisit alors son choix qui se fait exclusivement via le pavé numérique.
 
-- **GUI** :  L'interface graphique propose donc, par l'intermédiaire d'une classe **Application**,  les mêmes fonctionnalités que la version **terminal**. La différence étant qu'elle est affichée dans une fenêtre à l'image du système d'exploitation. L'utilisateur interagit ici majoritairement avec sa souris grâce à des boutons et des listes à parcourir notamment. La bibliothèque **Tkinter** est utilisée ici pour 'dessiner' et disposer les éléments de l'interface graphique.
+- **GUI** :  L'interface graphique propose donc, par l'intermédiaire d'une classe **Application**,  les mêmes fonctionnalités que la version **terminal**. La différence étant qu'elle est affichée dans une fenêtre à l'image du système d'exploitation. L'utilisateur interagit ici majoritairement avec sa souris grâce à des boutons et des listes à parcourir notamment. La bibliothèque **Tkinter** (intégrée nativement à Python) est utilisée ici pour dessiner et disposer les éléments de l'interface graphique.
 
 - **Main** :  L'exécution de l'application s'effectue par l'intermédiaire du fichier **./main.py**. Un menu propose ici, à l'utilisateur, de choisir entre la version "**Terminal**" ou "**Graphique**" de l'application. L'action est exécutée selon le choix effectué.
 
